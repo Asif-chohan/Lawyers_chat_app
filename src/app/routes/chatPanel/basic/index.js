@@ -256,7 +256,8 @@ class ChatPanel extends Component {
   showCommunication = () => {
     return (
       <div className="chat-box">
-        <div className="chat-box-main">{
+        <div className="chat-box-main">
+        {
           this.state.selectedUser === null ?
             <div className="loader-view" style={{height: 'calc(100vh - 120px)'}}>
               <i className="zmdi zmdi-comment s-128 text-muted"/>

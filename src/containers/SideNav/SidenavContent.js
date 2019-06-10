@@ -87,7 +87,7 @@ class SidenavContent extends Component {
   render() {
     return (
       <CustomScrollbars className=" scrollbar">
-        <ul className="nav-menu">
+        {/* <ul className="nav-menu">
 
           <li className="nav-header">
             <IntlMessages id="sidebar.main"/>
@@ -138,16 +138,16 @@ class SidenavContent extends Component {
                 </NavLink>
               </li>
             </ul>
-          </li>
+          </li> */}
 
-          <li className="ui_tooltip menu">
+          {/* <li className="ui_tooltip menu">
             <Button className="void">
               <i className="zmdi zmdi-folder zmdi-hc-fw"/>
               <span className="nav-text"><IntlMessages id="sidebar.components"/></span>
-            </Button>
+            </Button> */}
 
-            <ul className="sub-menu">
-              <li>
+            {/* <ul className="sub-menu"> */}
+              {/* <li>
                 <NavLink className="prepend-icon" to="/app/components/alerts">
                   <span className="nav-text"><IntlMessages id="sidebar.components.alerts"/></span>
                 </NavLink>
@@ -421,16 +421,17 @@ class SidenavContent extends Component {
               <i className="zmdi zmdi-email zmdi-hc-fw"/>
               <span className="nav-text"><IntlMessages id="sidebar.appModule.mail"/></span>
             </NavLink>
-          </li>
-
+          </li> */}
+        <ul className="nav-menu">
           <li className="menu no-arrow">
             <NavLink to="/app/chat-redux">
               <i className="zmdi zmdi-comment zmdi-hc-fw"/>
               <span className="nav-text"><IntlMessages id="sidebar.appModule.chat"/></span>
             </NavLink>
           </li>
+        </ul>
 
-          <li className="menu no-arrow">
+          {/* <li className="menu no-arrow">
             <NavLink to="/app/contact-redux">
               <i className="zmdi zmdi-account-box zmdi-hc-fw"/>
               <span className="nav-text"><IntlMessages id="sidebar.appModule.contact"/></span>
@@ -507,10 +508,10 @@ class SidenavContent extends Component {
                                 <span className="nav-text"><IntlMessages id="sidebar.timeLine.zigzag"/></span>
                             </NavLink>
                         </li>*/}
-            </ul>
-          </li>
+            {/* </ul>
+          </li> */}
 
-          <li className="menu">
+          {/* <li className="menu">
             <Button>
               <i className="zmdi zmdi-view-list zmdi-hc-fw"/>
               <span className="nav-text"><IntlMessages id="sidebar.customViews"/></span>
@@ -1059,9 +1060,7 @@ class SidenavContent extends Component {
                 </ul>
               </li>
             </ul>
-          </li>
-
-        </ul>
+          </li> */}
       </CustomScrollbars>
     );
   }

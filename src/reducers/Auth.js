@@ -48,7 +48,7 @@ export default (state = INIT_STATE, action) => {
       return {
         ...state,
         authUser: null,
-        initURL: '/app/dashboard/crypto',
+        initURL: '/app/chat',
         loader: false
       }
     }

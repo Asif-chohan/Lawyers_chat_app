@@ -86,7 +86,7 @@ class Menu extends Component {
       <div className="app-main-menu d-none d-md-block">
         <ul className="navbar-nav navbar-nav-mega">
 
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <span className="nav-link"><IntlMessages id="sidebar.main"/></span>
             <ul className="sub-menu">
 
@@ -771,7 +771,7 @@ class Menu extends Component {
                   <i className="zmdi zmdi-email zmdi-hc-fw"/>
                   <span className="nav-text"><IntlMessages id="sidebar.appModule.mailRedux"/></span>
                 </NavLink>
-              </li>
+    </li> */}
 
               <li>
                 <NavLink to="/app/chat">
@@ -786,7 +786,7 @@ class Menu extends Component {
                   <span className="nav-text"><IntlMessages id="sidebar.appModule.chatRedux"/></span>
                 </NavLink>
               </li>
-
+{/*
               <li>
                 <NavLink to="/app/contact">
                   <i className="zmdi zmdi-account-box zmdi-hc-fw"/>
@@ -1011,7 +1011,7 @@ class Menu extends Component {
               </li>
 
             </ul>
-          </li>
+          </li> */}
 
         </ul>
       </div>

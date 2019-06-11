@@ -1,22 +1,19 @@
-import React from 'react';
-import {ConnectedRouter} from 'connected-react-router'
-import {Provider} from 'react-redux';
-import {Route, Switch} from 'react-router-dom';
+import React from "react";
+import { ConnectedRouter } from "connected-react-router";
+import { Provider } from "react-redux";
+import { Route, Switch } from "react-router-dom";
 
-import configureStore, {history} from './store';
-import './firebase/firebase';
-import App from './containers/App';
+import configureStore, { history } from "./store";
+import "./firebase/firebase";
+// import App from './containers/App';
+import App from "./containers/index";
 
 export const store = configureStore();
 
-const MainApp = () =>
+const MainApp = () => (
   <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <Switch>
-        <Route path="/" component={App}/>
-      </Switch>
-    </ConnectedRouter>
-  </Provider>;
-
+    <App />
+  </Provider>
+);
 
 export default MainApp;

@@ -4,7 +4,9 @@ import {
   SIGN_IN,
   SIGN_IN_ERR,
   GET_USER,
-  GET_USER_ERR
+  GET_USER_ERR,
+  LOG_OUT,
+  LOG_OUT_ERR
 } from "../actions/user";
 
 const INIT_STATE = {
@@ -12,7 +14,8 @@ const INIT_STATE = {
   user: {},
   signUpStatus: "not done",
   userStatus: false,
-  signInStatus: "not done"
+  signInStatus: "not done",
+  logoutStatus: "not done"
 };
 
 export default (state = INIT_STATE, action) => {
@@ -54,6 +57,20 @@ export default (state = INIT_STATE, action) => {
       return {
         ...state,
         userStatus: false,
+        loader: new Date()
+      };
+    case LOG_OUT:
+      return {
+        ...state,
+        userStatus: false,
+        user: {},
+        logoutStatus: "done",
+        loader: new Date()
+      };
+    case LOG_OUT_ERR:
+      return {
+        ...state,
+        logoutStatus: "error",
         loader: new Date()
       };
     default:

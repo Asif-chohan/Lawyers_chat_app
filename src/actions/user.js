@@ -73,7 +73,6 @@ export const signIn = data => {
   };
 };
 export const getUser = () => {
- 
   return disptach => {
     axios
       .get(url + "user/authenticate")
@@ -83,7 +82,6 @@ export const getUser = () => {
           type: GET_USER,
           payload: res.data
         });
-
       })
       .catch(err => {
         console.log("err", err.status);
@@ -94,23 +92,30 @@ export const getUser = () => {
   };
 };
 export const logOut = () => {
- 
   return disptach => {
     axios
-      .get(url + "user/authenticate")
+      .post(url + "user/logout")
       .then(res => {
         console.log("res", res);
-        disptach({
-          type: GET_USER,
-          payload: res.data
-        });
+        if (res.data === "succefully logout!") {
+          toastr.success("Successfully logout");
 
+          disptach({
+            type: LOG_OUT
+          });
+        } else {
+          disptach({
+            type: LOG_OUT_ERR
+          });
+          toastr.error("Error has been ocured! try again later");
+        }
       })
       .catch(err => {
         console.log("err", err.status);
         disptach({
-          type: GET_USER_ERR
+          type: LOG_OUT_ERR
         });
+        toastr.error("Error has been ocured! try again later");
       });
   };
 };

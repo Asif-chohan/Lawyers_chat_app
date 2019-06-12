@@ -5,6 +5,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {userSignOut} from 'actions/Auth';
 import IntlMessages from 'util/IntlMessages';
+import {logOut} from 'actions/user'
 
 class UserInfo extends React.Component {
 
@@ -22,15 +23,16 @@ class UserInfo extends React.Component {
   };
 
   render() {
+    const {user} = this.props
     return (
       <div className="user-profile d-flex flex-row align-items-center">
         <Avatar
           alt='...'
-          src={require('assets/images/userAvatar/domnic-harris.jpg')}
+          src={require('assets/images/user.png')}
           className="user-avatar "
         />
         <div className="user-detail">
-          <h4 className="user-name" onClick={this.handleClick}>Robert Johnson <i
+          <h4 className="user-name" onClick={this.handleClick}>{user.name} <i
             className="zmdi zmdi-caret-down zmdi-hc-fw align-middle"/>
           </h4>
         </div>
@@ -57,7 +59,7 @@ class UserInfo extends React.Component {
           </MenuItem>
           <MenuItem onClick={() => {
             this.handleRequestClose();
-            this.props.userSignOut()
+            this.props.logOut()
           }}>
             <i className="zmdi zmdi-sign-in zmdi-hc-fw mr-2"/>
 
@@ -69,10 +71,17 @@ class UserInfo extends React.Component {
   }
 }
 
-const mapStateToProps = ({settings}) => {
-  const {locale} = settings;
-  return {locale}
-};
-export default connect(mapStateToProps, {userSignOut})(UserInfo);
+// const mapStateToProps = ({settings}) => {
+//   const {locale} = settings;
+//   return {locale}
+// };
+
+const mapStateToProps = (state)=>{
+  return{
+    locale: state.settings.locale,
+    user: state.userReducer.user,
+  }
+}
+export default connect(mapStateToProps, {logOut})(UserInfo);
 
 

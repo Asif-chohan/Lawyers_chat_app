@@ -17,29 +17,29 @@ class Tour extends React.PureComponent {
       autoStart: false,
       running: false,
       steps: [
-        {
-          text: 'Shows logged-in user\'s info with dropdown context menu.',
-          textAlign: 'center',
-          selector: '.app-container .app-sidebar .user-profile',
-          position: 'right',
-          isFixed: true,
-        },
-        {
-          title: 'Notifications',
-          text: 'Keep yourself notified with the upcoming alerts and announcements',
-          textAlign: 'center',
-          selector: '.app-container .app-main-container .app-main-header .app-tour',
-          position: 'top',
-          isFixed: true,
-        },
-        {
-          title: 'Messages',
-          text: 'Check your recent messages from your connections.',
-          textAlign: 'center',
-          selector: '.app-container .app-main-container .app-main-header .mail-tour',
-          position: 'top',
-          isFixed: false,
-        }
+        // {
+        //   text: 'Shows logged-in user\'s info with dropdown context menu.',
+        //   textAlign: 'center',
+        //   selector: '.app-container .app-sidebar .user-profile',
+        //   position: 'right',
+        //   isFixed: true,
+        // },
+        // {
+        //   title: 'Notifications',
+        //   text: 'Keep yourself notified with the upcoming alerts and announcements',
+        //   textAlign: 'center',
+        //   selector: '.app-container .app-main-container .app-main-header .app-tour',
+        //   position: 'top',
+        //   isFixed: true,
+        // },
+        // {
+        //   title: 'Messages',
+        //   text: 'Check your recent messages from your connections.',
+        //   textAlign: 'center',
+        //   selector: '.app-container .app-main-container .app-main-header .mail-tour',
+        //   position: 'top',
+        //   isFixed: false,
+        // }
       ],
       step: 0,
     };

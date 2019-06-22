@@ -97,25 +97,25 @@ class ChatPanel extends Component {
     );
   };
 
-  attachTracks = (tracks, container) => {
-
+  attachTracks(tracks) {
+    let container = this.refs.localMedia;
     console.log("================tracks====================", tracks);
     tracks.forEach(track => {
       console.log("===================container=================", container);
       console.log(track.track);
-      container.appendChild(track.track.attach());
+      container.appendChild(track.attach());
     });
-  };
+  }
 
   // Attaches a track to a specified DOM container
-  attachParticipantTracks = (participant, container) => {
-    console.log("==========participant==========================");
+  attachParticipantTracks(participant, container) {
+    console.log("==========attachParticipantTracks==========================",container);
     console.log(participant);
     var tracks = Array.from(participant.tracks.values());
 
-    console.log("===============tracks=====================", tracks);
+    console.log("===============attachParticipantTracks============", tracks);
     this.attachTracks(tracks, container);
-  };
+  }
 
   detachTracks = tracks => {
     tracks.forEach(track => {
@@ -140,11 +140,11 @@ class ChatPanel extends Component {
     });
 
     // Attach LocalParticipant's Tracks, if not already attached.
-    
+
     var previewContainer = this.refs.localMedia;
-    console.log('=======previewContainer=============================');
+    console.log("=======previewContainer=============================");
     console.log(previewContainer);
-    console.log('====================================');
+    console.log("====================================");
     if (!previewContainer.querySelector("video")) {
       this.attachParticipantTracks(room.localParticipant, previewContainer);
     }
@@ -194,10 +194,6 @@ class ChatPanel extends Component {
       this.setState({ hasJoinedRoom: false, localMediaAvailable: false });
     });
   };
-
-
-
-
 
   leaveRoom = () => {
     this.state.activeRoom.disconnect();
@@ -284,7 +280,7 @@ class ChatPanel extends Component {
                 />
               </div>
             </div>
-         
+
             <div className="chat-sent">
               <IconButton
                 // onClick={this.submitComment.bind(this)}
@@ -626,7 +622,7 @@ class ChatPanel extends Component {
   }
 
   render() {
-    const {incomingCall} = this.props
+    const { incomingCall } = this.props;
     // Only show video track after user has joined a room
     let showLocalTrack = this.state.localMediaAvailable ? (
       <div className="flex-item">
@@ -647,7 +643,7 @@ class ChatPanel extends Component {
         <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
           <div className="chat-module-box">
             <div className="d-block d-xl-none">
-            {showLocalTrack}
+              {showLocalTrack}
 
               <Drawer
                 open={drawerState}

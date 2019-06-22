@@ -1,7 +1,7 @@
 import url from "../endPoint";
 import axios from "axios";
 import toastr from "toastr";
-
+import socket from "../endPoint/socketConfig";
 export const SIGN_UP = "SIGN_UP";
 export const SIGN_UP_ERR = "SIGN_UP_ERR";
 export const SIGN_IN = "SIGN_IN";
@@ -10,6 +10,8 @@ export const GET_USER = "GET_USER";
 export const GET_USER_ERR = "GET_USER_ERR";
 export const LOG_OUT = "LOG_OUT";
 export const LOG_OUT_ERR = "LOG_OUT_ERR";
+export const GET_ALL = "GET_ALL";
+export const GET_ALL_ERR = "GET_ALL_ERR";
 
 export const singUp = data => {
   console.log("======in action==============================");
@@ -56,6 +58,7 @@ export const signIn = data => {
       .post(url + "user/login", data)
       .then(res => {
         console.log("res", res);
+        socket.emit("setId", res.data._id);
         disptach({
           type: SIGN_IN,
           payload: res.data
@@ -78,6 +81,8 @@ export const getUser = () => {
       .get(url + "user/authenticate")
       .then(res => {
         console.log("res", res);
+        socket.emit("setId", res.data._id);
+
         disptach({
           type: GET_USER,
           payload: res.data
@@ -117,5 +122,23 @@ export const logOut = () => {
         });
         toastr.error("Error has been ocured! try again later");
       });
+  };
+};
+
+export const getAllUsers = () => {
+  return dispatch => {
+    socket.emit("getAll");
+    socket.on("allUsers", data => {
+      if (data === "error") {
+        dispatch({
+          type: GET_ALL_ERR
+        });
+      } else {
+        dispatch({
+          type: GET_ALL,
+          payload: data
+        });
+      }
+    });
   };
 };

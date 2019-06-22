@@ -4,6 +4,7 @@ import Settings from "./Settings";
 import ChatData from "./Chat";
 import userReducer from "./user";
 import Auth from "./Auth";
+import chatReducer from './chatReducer'
 
 export default history =>
   combineReducers({
@@ -11,5 +12,6 @@ export default history =>
     settings: Settings,
     chatData: ChatData,
     auth: Auth,
-    userReducer
+    userReducer,
+    chatReducer
   });

@@ -6,7 +6,9 @@ import {
   GET_USER,
   GET_USER_ERR,
   LOG_OUT,
-  LOG_OUT_ERR
+  LOG_OUT_ERR,
+  GET_ALL,
+  GET_ALL_ERR
 } from "../actions/user";
 
 const INIT_STATE = {
@@ -15,7 +17,9 @@ const INIT_STATE = {
   signUpStatus: "not done",
   userStatus: false,
   signInStatus: "not done",
-  logoutStatus: "not done"
+  logoutStatus: "not done",
+  getAllStatus: "not done",
+  allUsers: []
 };
 
 export default (state = INIT_STATE, action) => {
@@ -71,6 +75,21 @@ export default (state = INIT_STATE, action) => {
       return {
         ...state,
         logoutStatus: "error",
+        loader: new Date()
+      };
+    case GET_ALL:
+      let users = action.payload.filter(item => item._id !== state.user._id);
+      console.log("user all", users);
+      return {
+        ...state,
+        getAllStatus: "done",
+        allUsers: users,
+        loader: new Date()
+      };
+    case GET_ALL_ERR:
+      return {
+        ...state,
+        getAllStatus: "error",
         loader: new Date()
       };
     default:

@@ -24,14 +24,9 @@ import Video from "twilio-video";
 
 // dialog imports
 import Dialog from "@material-ui/core/Dialog";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
+import Fab from "@material-ui/core/Fab";
+import CallEnd from "@material-ui/icons/CallEnd";
 
 function Transition(props) {
   return <Slide direction="up" {...props} />;
@@ -525,6 +520,14 @@ class ChatPanel extends Component {
             <div className="flex-item">
               <div ref="remoteMedia" className="remoteVideo">
                 <div ref="localMedia" className="localVideo" />
+                <Fab
+                  color="secondary"
+                  aria-label="Add"
+                  className="endCall"
+                  onClick={this.leaveRoom}
+                >
+                  <CallEnd />
+                </Fab>
               </div>
             </div>
           </Dialog>

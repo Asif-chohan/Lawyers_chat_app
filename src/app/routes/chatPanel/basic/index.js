@@ -45,7 +45,8 @@ class ChatPanel extends Component {
       return;
     }
 
-    let roomName = this.props.user._id + user._id;
+    // let roomName = this.props.user._id + user._id;
+    let roomName = "asif";
     console.log("Joining room '" + roomName + "'...");
 
     let connectOptions = {
@@ -77,10 +78,7 @@ class ChatPanel extends Component {
 
   // Attaches a track to a specified DOM container
   attachParticipantTracks(participant, container) {
-    console.log(
-      "==========attachParticipantTracks==========================",
-      container
-    );
+    console.log("====attachParticipantTracks==============", container);
     console.log(participant);
     var tracks = Array.from(participant.tracks.values());
 
@@ -181,9 +179,7 @@ class ChatPanel extends Component {
 
     let showLocalTrack = this.state.localMediaAvailable ? (
       <div className="flex-item">
-        <div ref="remoteMedia" className="remoteVideo">
-          <div ref="localMedia" className="localVideo" />
-        </div>
+        <div ref="localMedia" />
       </div>
     ) : (
       ""

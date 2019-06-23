@@ -22,39 +22,34 @@ import { getAllUsers } from "../../../../actions/user";
 import { sendCall, receCall } from "../../../../actions/chatAction";
 import Video from "twilio-video";
 
-class ChatPanel extends Component {
-  filterContact = userName => {
-    if (userName === "") {
-      return users.filter(user => !user.recent);
-    }
-    return users.filter(
-      user =>
-        !user.recent &&
-        user.name.toLowerCase().indexOf(userName.toLowerCase()) > -1
-    );
-  };
-  filterUsers = userName => {
-    if (userName === "") {
-      return users.filter(user => user.recent);
-    }
-    return users.filter(
-      user =>
-        user.recent &&
-        user.name.toLowerCase().indexOf(userName.toLowerCase()) > -1
-    );
-  };
+// dialog imports
+import Dialog from "@material-ui/core/Dialog";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItem from "@material-ui/core/ListItem";
+import List from "@material-ui/core/List";
+import Divider from "@material-ui/core/Divider";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import Slide from "@material-ui/core/Slide";
 
-  // call functions
+function Transition(props) {
+  return <Slide direction="up" {...props} />;
+}
+
+class ChatPanel extends Component {
+  // call functions.....................................
   startCall = user => {
     if (!this.state.roomName.trim()) {
       this.setState({ roomNameErr: true });
       return;
     }
 
-    console.log("Joining room '" + this.state.roomName + "'...");
+    let roomName = this.props.user._id + user._id;
+    console.log("Joining room '" + roomName + "'...");
 
     let connectOptions = {
-      name: this.state.roomName
+      name: roomName
     };
 
     if (this.state.previewTracks) {
@@ -65,51 +60,28 @@ class ChatPanel extends Component {
     // LocalParticipant's Tracks.
     Video.connect(this.state.token, connectOptions).then(
       this.roomJoined,
-      this.props.sendCall(user, this.state.roomName),
-      error => {
-        alert("Could not connect to Twilio: " + error.message);
-      }
-    );
-  };
-  receCall = () => {
-    if (!this.state.roomName.trim()) {
-      this.setState({ roomNameErr: true });
-      return;
-    }
 
-    console.log("Joining room '" + this.state.roomName + "'...");
-
-    let connectOptions = {
-      name: this.state.roomName
-    };
-
-    if (this.state.previewTracks) {
-      connectOptions.tracks = this.state.previewTracks;
-    }
-
-    // Join the Room with the token from the server and the
-    // LocalParticipant's Tracks.
-    Video.connect(this.state.token, connectOptions).then(
-      this.roomJoined,
+      this.props.sendCall(user, roomName),
       error => {
         alert("Could not connect to Twilio: " + error.message);
       }
     );
   };
 
-  attachTracks(tracks) {
-    let container = this.refs.localMedia;
+  attachTracks(tracks, container) {
     console.log("================tracks====================", tracks);
     tracks.forEach(track => {
       console.log("===================container=================", container);
-      console.log(track.track);
       container.appendChild(track.attach());
     });
   }
 
   // Attaches a track to a specified DOM container
   attachParticipantTracks(participant, container) {
-    console.log("==========attachParticipantTracks==========================",container);
+    console.log(
+      "==========attachParticipantTracks==========================",
+      container
+    );
     console.log(participant);
     var tracks = Array.from(participant.tracks.values());
 
@@ -119,7 +91,7 @@ class ChatPanel extends Component {
 
   detachTracks = tracks => {
     tracks.forEach(track => {
-      track.track.detach().forEach(detachedElement => {
+      track.detach().forEach(detachedElement => {
         detachedElement.remove();
       });
     });
@@ -200,7 +172,7 @@ class ChatPanel extends Component {
     this.setState({ hasJoinedRoom: false, localMediaAvailable: false });
   };
 
-  // end of call code
+  // end of call code......................................................
 
   Communication = () => {
     const { incomingCall } = this.props;
@@ -208,13 +180,15 @@ class ChatPanel extends Component {
     // const { conversationData } = conversation;
     console.log("selecteduser", selectedUser);
 
-    let showLocalTrack = this.state.localMediaAvailable ? (
-      <div className="flex-item">
-        <div ref="localMedia" />
-      </div>
-    ) : (
-      ""
-    );
+    // let showLocalTrack = this.state.localMediaAvailable ? (
+    //   <div className="flex-item">
+    //     <div ref="remoteMedia" className="remoteVideo">
+    //       <div ref="localMedia" className="localVideo" />
+    //     </div>
+    //   </div>
+    // ) : (
+    //   ""
+    // );
 
     return (
       <div className="chat-main">
@@ -253,7 +227,7 @@ class ChatPanel extends Component {
           }}
         >
           <div className="flex-container">
-            {showLocalTrack}
+            {/* {showLocalTrack} */}
 
             <div className="flex-item" ref="remoteMedia" id="remote-media" />
           </div>
@@ -273,8 +247,6 @@ class ChatPanel extends Component {
                 <textarea
                   id="required"
                   className="border-0 form-control chat-textarea"
-                  onKeyUp={this._handleKeyPress.bind(this)}
-                  onChange={this.updateMessageValue.bind(this)}
                   value={message}
                   placeholder="Type and hit enter to send message"
                 />
@@ -296,67 +268,6 @@ class ChatPanel extends Component {
     );
   };
 
-  AppUsersInfo = () => {
-    return (
-      <div className="chat-sidenav-main">
-        <div className="bg-grey lighten-5 chat-sidenav-header">
-          <div className="chat-user-hd mb-0">
-            <IconButton
-              className="back-to-chats-button"
-              aria-label="back button"
-              onClick={() => {
-                this.setState({
-                  userState: 1
-                });
-              }}
-            >
-              <i className="zmdi zmdi-arrow-back" />
-            </IconButton>
-          </div>
-          <div className="chat-user chat-user-center">
-            <div className="chat-avatar mx-auto">
-              <img
-                src={require("assets/images/userAvatar/domnic-harris.jpg")}
-                className="avatar avatar-shadow rounded-circle size-60 huge"
-                alt="John Doe"
-              />
-            </div>
-
-            <div className="user-name h4 my-2">Robert Johnson</div>
-          </div>
-        </div>
-        <div className="chat-sidenav-content">
-          <CustomScrollbars
-            className="chat-sidenav-scroll scrollbar"
-            style={{
-              height:
-                this.props.width >= 1200
-                  ? "calc(100vh - 328px)"
-                  : "calc(100vh - 162px)"
-            }}
-          >
-            <form className="p-4">
-              <div className="form-group mt-4">
-                <label>Mood</label>
-
-                <Input
-                  fullWidth={true}
-                  id="exampleTextarea"
-                  multiline
-                  rows={3}
-                  onKeyUp={this._handleKeyPress.bind(this)}
-                  onChange={this.updateMessageValue.bind(this)}
-                  defaultValue="it's a status....not your diary..."
-                  placeholder="Status"
-                  margin="none"
-                />
-              </div>
-            </form>
-          </CustomScrollbars>
-        </div>
-      </div>
-    );
-  };
   ChatUsers = () => {
     return (
       <div className="chat-sidenav-main">
@@ -394,7 +305,6 @@ class ChatPanel extends Component {
           <div className="search-wrapper">
             <SearchBox
               placeholder="Search or start new chat"
-              onChange={this.updateSearchChatUser.bind(this)}
               value={this.state.searchChatUser}
             />
           </div>
@@ -462,19 +372,7 @@ class ChatPanel extends Component {
       </div>
     );
   };
-  _handleKeyPress = e => {
-    if (e.key === "Enter") {
-      this.submitComment();
-    }
-  };
 
-  handleChange = (event, value) => {
-    this.setState({ selectedTabIndex: value });
-  };
-
-  handleChangeIndex = index => {
-    this.setState({ selectedTabIndex: index });
-  };
   onSelectUser = user => {
     this.setState({
       loader: true,
@@ -544,50 +442,13 @@ class ChatPanel extends Component {
       activeRoom: "" // Track the current active room
     };
   }
+  handleChange = (event, value) => {
+    this.setState({ selectedTabIndex: value });
+  };
 
-  submitComment() {
-    if (this.state.message !== "") {
-      const updatedConversation = this.state.conversation.conversationData.concat(
-        {
-          type: "sent",
-          message: this.state.message,
-          sentAt: Moment().format("hh:mm:ss A")
-        }
-      );
-      this.setState({
-        conversation: {
-          ...this.state.conversation,
-          conversationData: updatedConversation
-        },
-        message: "",
-        conversationList: this.state.conversationList.map(conversationData => {
-          if (conversationData.id === this.state.conversation.id) {
-            return {
-              ...this.state.conversation,
-              conversationData: updatedConversation
-            };
-          } else {
-            return conversationData;
-          }
-        })
-      });
-    }
-  }
-
-  updateMessageValue(evt) {
-    this.setState({
-      message: evt.target.value
-    });
-  }
-
-  updateSearchChatUser(evt) {
-    this.setState({
-      searchChatUser: evt.target.value,
-      contactList: this.filterContact(evt.target.value),
-      chatUsers: this.filterUsers(evt.target.value)
-    });
-  }
-
+  handleChangeIndex = index => {
+    this.setState({ selectedTabIndex: index });
+  };
   onToggleDrawer() {
     this.setState({
       drawerState: !this.state.drawerState
@@ -623,27 +484,14 @@ class ChatPanel extends Component {
 
   render() {
     const { incomingCall } = this.props;
-    // Only show video track after user has joined a room
-    let showLocalTrack = this.state.localMediaAvailable ? (
-      <div className="flex-item">
-        <div ref="localMedia" />
-      </div>
-    ) : (
-      ""
-    );
-    // Hide 'Join Room' button if user has already joined a room.
-    let joinOrLeaveRoomButton = this.state.hasJoinedRoom ? (
-      <button label="Leave Room" secondary={true} onClick={this.leaveRoom} />
-    ) : (
-      <button label="Join Room" primary={true} onClick={this.joinRoom} />
-    );
-    const { loader, userState, drawerState } = this.state;
+
+    const { loader, userState, drawerState, hasJoinedRoom } = this.state;
     return (
       <div className="app-wrapper app-wrapper-module">
         <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
           <div className="chat-module-box">
             <div className="d-block d-xl-none">
-              {showLocalTrack}
+              {/* {showLocalTrack} */}
 
               <Drawer
                 open={drawerState}
@@ -652,11 +500,6 @@ class ChatPanel extends Component {
                 {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
               </Drawer>
             </div>
-            {incomingCall ? (
-              <button onClick={this.receCall}>Receive call</button>
-            ) : (
-              <p />
-            )}
 
             <div className="chat-sidenav d-none d-xl-flex">
               {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
@@ -672,6 +515,18 @@ class ChatPanel extends Component {
               this.showCommunication()
             )}
           </div>
+          <Dialog
+            fullScreen
+            open={hasJoinedRoom}
+            onClose={this.handleClose}
+            TransitionComponent={Transition}
+          >
+            <div className="flex-item">
+              <div ref="remoteMedia" className="remoteVideo">
+                <div ref="localMedia" className="localVideo" />
+              </div>
+            </div>
+          </Dialog>
         </div>
       </div>
     );
@@ -687,6 +542,7 @@ const mapStateToProps = state => {
   return {
     width: state.settings.width,
     allUsers: state.userReducer.allUsers,
+    user: state.userReducer.user,
     getAllStatus: state.userReducer.getAllStatus,
     loader: state.userReducer.loader,
     getTokanStatus: state.chatReducer.getTokanStatus,

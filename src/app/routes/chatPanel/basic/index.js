@@ -60,7 +60,6 @@ class ChatPanel extends Component {
     // LocalParticipant's Tracks.
     Video.connect(this.state.token, connectOptions).then(
       this.roomJoined,
-
       this.props.sendCall(user, roomName),
       error => {
         alert("Could not connect to Twilio: " + error.message);
@@ -180,15 +179,15 @@ class ChatPanel extends Component {
     // const { conversationData } = conversation;
     console.log("selecteduser", selectedUser);
 
-    // let showLocalTrack = this.state.localMediaAvailable ? (
-    //   <div className="flex-item">
-    //     <div ref="remoteMedia" className="remoteVideo">
-    //       <div ref="localMedia" className="localVideo" />
-    //     </div>
-    //   </div>
-    // ) : (
-    //   ""
-    // );
+    let showLocalTrack = this.state.localMediaAvailable ? (
+      <div className="flex-item">
+        <div ref="remoteMedia" className="remoteVideo">
+          <div ref="localMedia" className="localVideo" />
+        </div>
+      </div>
+    ) : (
+      ""
+    );
 
     return (
       <div className="chat-main">
@@ -227,7 +226,7 @@ class ChatPanel extends Component {
           }}
         >
           <div className="flex-container">
-            {/* {showLocalTrack} */}
+            {showLocalTrack}
 
             <div className="flex-item" ref="remoteMedia" id="remote-media" />
           </div>
@@ -485,7 +484,13 @@ class ChatPanel extends Component {
   render() {
     const { incomingCall } = this.props;
 
-    const { loader, userState, drawerState, hasJoinedRoom } = this.state;
+    const {
+      loader,
+      userState,
+      drawerState,
+      hasJoinedRoom,
+      localMediaAvailable
+    } = this.state;
     return (
       <div className="app-wrapper app-wrapper-module">
         <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
@@ -515,9 +520,9 @@ class ChatPanel extends Component {
               this.showCommunication()
             )}
           </div>
-          <Dialog
+          {/* <Dialog
             fullScreen
-            open={hasJoinedRoom}
+            open={localMediaAvailable}
             onClose={this.handleClose}
             TransitionComponent={Transition}
           >
@@ -526,7 +531,7 @@ class ChatPanel extends Component {
                 <div ref="localMedia" className="localVideo" />
               </div>
             </div>
-          </Dialog>
+          </Dialog> */}
         </div>
       </div>
     );

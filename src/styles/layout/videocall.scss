@@ -1,14 +1,14 @@
-// video {
-//   transform: scaleX(-1);
-// }
+video {
+  transform: scaleX(-1);
+}
 
-// .localVideo video {
-//   width: 100px !important;
-//   position: absolute !important;
-//   z-index: 200 !important;
-//   right: 10;
-//   bottom: 10;
-// }
-// .remoteVideo video {
-//   width: 100%;
-// }
+.localVideo video {
+  width: 100px !important;
+  position: absolute !important;
+  z-index: 200 !important;
+  right: 10 !important;
+  bottom: 10 !important;
+}
+.remoteVideo video {
+  width: 100%;
+}

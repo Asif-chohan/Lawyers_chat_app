@@ -8,7 +8,10 @@ import {
   LOG_OUT,
   LOG_OUT_ERR,
   GET_ALL,
-  GET_ALL_ERR
+  GET_ALL_ERR,
+  EMAIL_IN_USE,
+  EMAIL_IN_USE_ERR,
+  EMAIL_READY_TO_USE
 } from "../actions/user";
 
 const INIT_STATE = {
@@ -19,7 +22,10 @@ const INIT_STATE = {
   signInStatus: "not done",
   logoutStatus: "not done",
   getAllStatus: "not done",
-  allUsers: []
+  allUsers: [],
+  checkEmailStatus: "not done",
+  new_User:{},
+  emailReadyToUse: false
 };
 
 export default (state = INIT_STATE, action) => {
@@ -36,6 +42,7 @@ export default (state = INIT_STATE, action) => {
         signUpStatus: "error",
         loader: new Date()
       };
+
     case SIGN_IN:
       return {
         ...state,
@@ -91,6 +98,27 @@ export default (state = INIT_STATE, action) => {
         ...state,
         getAllStatus: "error",
         loader: new Date()
+      };
+    case EMAIL_IN_USE:
+      return {
+        ...state,
+        checkEmailStatus: "done",
+        emailReadyToUse: false,
+        loader: new Date()
+      };
+    case EMAIL_IN_USE_ERR:
+      return {
+        ...state,
+        checkEmailStatus: "error",
+        loader: new Date()
+      };
+      case EMAIL_READY_TO_USE:
+      return {
+          ...state,
+          checkEmailStatus:"done",
+          emailReadyToUse:true,
+          loader:new Date(),
+          new_User:action.data
       };
     default:
       return state;

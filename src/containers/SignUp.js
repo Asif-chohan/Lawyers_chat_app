@@ -2,7 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
+import { Route } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+import url from "../endPoint";
 import {
   NotificationContainer,
   NotificationManager
@@ -20,7 +22,8 @@ import {
   userSignUp,
   userTwitterSignIn
 } from "actions/Auth";
-import { singUp } from "actions/user";
+import { singUp, verifyEmailFromServer } from "actions/user";
+
 
 class SignUp extends React.Component {
   constructor() {
@@ -35,16 +38,23 @@ class SignUp extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.signUpStatus == "done") {
-      this.setState({
-        loader: false
-      });
-      this.props.history.push("signin");
-    } else if (nextProps.signUpStatus == "error") {
-      this.setState({
-        loader: false
-      });
-    }
+    this.setState({
+      loader: false
+    });
+    // if (nextProps.signUpStatus == "done") {
+    //   this.setState({
+    //     loader: false
+    //   });
+    //   this.props.history.push("signin");
+    // } else if (nextProps.signUpStatus == "error") {
+    //   this.setState({
+    //     loader: false
+    //   });
+    // }
+    if (nextProps.checkEmailStatus == "done" && nextProps.emailReadyToUse == true) {
+      this.props.history.push("/signup/uploadImg");
+    } 
+
   }
 
   componentDidUpdate() {
@@ -72,17 +82,22 @@ class SignUp extends React.Component {
     } else if (this.state.password.length < 7) {
       toastr.error("password must be greater than 7 characters");
     } else if (this.state.password !== this.state.cpassword) {
-      toastr.error("password doesnot match");
+      toastr.error("password does not match");
     } else {
       this.setState({
         loader: true
       });
+
       let data = {
         name: this.state.name,
         email: this.state.email.toLowerCase(),
         password: this.state.password
       };
-      this.props.singUp(data);
+      if (this.state.email != "" && this.validateEmail(this.state.email)) {
+        this.props.verifyEmailFromServer(data)
+      }
+      // this.props.singUp(data);
+      // this.props.history.push("/signup/uploadImg")
     }
   };
 
@@ -161,6 +176,17 @@ class SignUp extends React.Component {
                   margin="normal"
                   className="mt-0 mb-4"
                 />
+                {/* <TextField
+                  type="password"
+                  onChange={event =>
+                    this.setState({ cpassword: event.target.value })
+                  }
+                  label="Confirm Password"
+                  fullWidth
+                  defaultValue={cpassword}
+                  margin="normal"
+                  className="mt-0 mb-4"
+                /> */}
 
                 <div className="mb-3 d-flex align-items-center justify-content-between">
                   <Button
@@ -169,13 +195,12 @@ class SignUp extends React.Component {
                     color="primary"
                     disabled={loader}
                   >
-                    <IntlMessages id="appModule.regsiter" />
+                    <IntlMessages id="Next" />
                   </Button>
                   <Link to="/signin">
                     <IntlMessages id="signUp.alreadyMember" />
                   </Link>
                 </div>
-
                 {/* <div className="app-social-block my-1 my-sm-3">
                   <IntlMessages id="signIn.connectWith" />
                   <ul className="social-link">
@@ -252,7 +277,9 @@ class SignUp extends React.Component {
 const mapStateToProps = state => {
   return {
     signUpStatus: state.userReducer.signUpStatus,
-    loader: state.userReducer.loader
+    loader: state.userReducer.loader,
+    checkEmailStatus: state.userReducer.checkEmailStatus  ,
+    emailReadyToUse: state.userReducer.emailReadyToUse,
   };
 };
 export default connect(
@@ -265,6 +292,7 @@ export default connect(
     userGoogleSignIn,
     userGithubSignIn,
     userTwitterSignIn,
-    singUp
+    singUp,
+    verifyEmailFromServer
   }
 )(SignUp);

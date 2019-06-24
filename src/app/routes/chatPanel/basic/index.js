@@ -24,11 +24,14 @@ import Video from "twilio-video";
 import placeholderImage from "../../../../assets/images/placeholder.jpg"
 import Typography from '@material-ui/core/Typography';
 
+import sound from "../../../../assets/sound.mp3";
 // dialog imports
 import Dialog from "@material-ui/core/Dialog";
 import Slide from "@material-ui/core/Slide";
 import Fab from "@material-ui/core/Fab";
 import CallEnd from "@material-ui/icons/CallEnd";
+import OutGoingCall from "../../../../components/Call/outgoingCall";
+import Call from "@material-ui/icons/Call";
 
 function Transition(props) {
   return <Slide direction="up" {...props} />;
@@ -38,11 +41,14 @@ class ChatPanel extends Component {
   // call functions.....................................
   startCall = user => {
     if (!this.state.roomName.trim()) {
-      this.setState({ roomNameErr: true });
+      this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
     }
 
-    let roomName = "asif";
+    this.setState({
+      showOutGoingLoader: true
+    });
+    let roomName = "newAsif";
     // let roomName = this.props.user._id + user._id;
     console.log("Joining room '" + roomName + "'...");
 
@@ -55,7 +61,7 @@ class ChatPanel extends Component {
     }
 
     // Join the Room with the token from the server and the
-    // LocalParticipant's Tracks.
+
     Video.connect(this.state.token, connectOptions).then(
       this.roomJoined,
 
@@ -101,22 +107,27 @@ class ChatPanel extends Component {
   };
 
   roomJoined = room => {
+    this.togglePlay();
+
     // Called when a participant joins a room
     console.log("Joined as '" + this.state.identity + "'");
     this.setState({
       activeRoom: room,
       localMediaAvailable: true,
-      hasJoinedRoom: true
+      hasJoinedRoom: true,
+      showOutGoingScreen: true,
+      showOutGoingLoader: false
     });
 
     // Attach LocalParticipant's Tracks, if not already attached.
-
-    var previewContainer = this.refs.localMedia;
-    console.log("=======previewContainer=============================");
-    console.log(previewContainer);
-    console.log("====================================");
-    if (!previewContainer.querySelector("video")) {
-      this.attachParticipantTracks(room.localParticipant, previewContainer);
+    if (!this.state.showOutGoingScreen) {
+      var previewContainer = this.refs.localMedia;
+      console.log("=======previewContainer=============================");
+      console.log(previewContainer);
+      console.log("====================================");
+      if (!previewContainer.querySelector("video")) {
+        this.attachParticipantTracks(room.localParticipant, previewContainer);
+      }
     }
 
     // Attach the Tracks of the Room's Participants.
@@ -148,6 +159,7 @@ class ChatPanel extends Component {
     room.on("participantDisconnected", participant => {
       console.log("Participant '" + participant.identity + "' left the room");
       this.detachParticipantTracks(participant);
+      this.leaveRoom();
     });
 
     // Once the LocalParticipant leaves the room, detach the Tracks
@@ -166,15 +178,25 @@ class ChatPanel extends Component {
   };
 
   leaveRoom = () => {
+    this.togglePlay();
     this.state.activeRoom.disconnect();
-    this.setState({ hasJoinedRoom: false, localMediaAvailable: false });
+    this.setState({
+      hasJoinedRoom: false,
+      localMediaAvailable: false,
+      showOutGoingScreen: false
+    });
   };
 
   // end of call code......................................................
 
   Communication = () => {
     const { incomingCall } = this.props;
-    const { message, selectedUser, conversation } = this.state;
+    const {
+      message,
+      selectedUser,
+      conversation,
+      showOutGoingLoader
+    } = this.state;
     // const { conversationData } = conversation;
     console.log("selecteduser", selectedUser);
 
@@ -241,7 +263,7 @@ class ChatPanel extends Component {
             className="d-flex flex-row align-items-center"
             style={{ maxHeight: 51 }}
           >
-            <div className="col">
+            {/* <div className="col">
               <div className="form-group">
                 <textarea
                   id="required"
@@ -250,16 +272,20 @@ class ChatPanel extends Component {
                   placeholder="Type and hit enter to send message"
                 />
               </div>
-            </div>
+            </div> */}
 
-            <div className="chat-sent">
-              <IconButton
-                // onClick={this.submitComment.bind(this)}
-                onClick={() => this.startCall(selectedUser)}
-                aria-label="Send message"
-              >
-                <i className="zmdi  zmdi-mail-send" />
-              </IconButton>
+            <div className="chat-sent" style={{ margin: "auto" }}>
+              {showOutGoingLoader ? (
+                <CircularProgress />
+              ) : (
+                <Fab
+                  style={{ color: "green", marginRight: "20px" }}
+                  aria-label="Add"
+                  onClick={() => this.startCall(selectedUser)}
+                >
+                  <Call />
+                </Fab>
+              )}
             </div>
           </div>
         </div>
@@ -465,7 +491,10 @@ class ChatPanel extends Component {
       previewTracks: null,
       localMediaAvailable: false,
       hasJoinedRoom: false,
-      activeRoom: "" // Track the current active room
+      activeRoom: "", // Track the current active room,
+      play: false,
+      showOutGoingScreen: false,
+      showOutGoingLoader: false
     };
   }
   handleChange = (event, value) => {
@@ -508,10 +537,27 @@ class ChatPanel extends Component {
     }
   }
 
+  audio = new Audio(sound);
+
+  // play Audio
+  togglePlay = () => {
+    this.setState({ play: !this.state.play }, () => {
+      this.state.play ? this.audio.play() : this.audio.pause();
+    });
+  };
+
   render() {
     const { incomingCall } = this.props;
 
-    const { loader, userState, drawerState, hasJoinedRoom } = this.state;
+    const {
+      loader,
+      userState,
+      drawerState,
+      hasJoinedRoom,
+      showOutGoingScreen,
+      selectedUser,
+      showOutGoingLoader
+    } = this.state;
     return (
       <div className="app-wrapper app-wrapper-module">
         <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
@@ -541,9 +587,15 @@ class ChatPanel extends Component {
               this.showCommunication()
             )}
           </div>
+          {showOutGoingScreen && (
+            <OutGoingCall
+              selectedUser={selectedUser}
+              leaveRoom={this.leaveRoom}
+            />
+          )}
           <Dialog
             fullScreen
-            open={hasJoinedRoom}
+            open={false}
             onClose={this.handleClose}
             TransitionComponent={Transition}
           >

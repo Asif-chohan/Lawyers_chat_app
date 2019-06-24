@@ -13,6 +13,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Call from "@material-ui/icons/Call";
 import CallEnd from "@material-ui/icons/CallEnd";
+import UserIcon from '../../assets/images/user.png'
 
 const DialogTitle = withStyles(theme => ({
   root: {
@@ -84,31 +85,30 @@ class CustomizedDialogDemo extends React.Component {
   };
 
   render() {
+    const {selectedUser, leaveRoom} = this.props
     return (
       <div>
-        <Button variant="outlined" color="secondary" onClick={this.handleClickOpen}>
-          Open dialog
-        </Button>
+    
         <Dialog
           fullScreen
           onClose={this.handleClose}
           aria-labelledby="customized-dialog-title"
-          open={this.state.open}
+          open={true}
         >
           <DialogTitle id="customized-dialog-title" >
             <Typography  style={{color:"white",fontSize:"1.4em"}}>
-                Muhammad Ishaq
+                {selectedUser.name}
             </Typography>
-            <Typography color="secondary" style={{color:"#e64a19"}}>
-                connecting
+            <Typography color="secondary" style={{color:"#fff"}}>
+                calling
             </Typography>
 
           </DialogTitle>
           <DialogContent style={{display:"flex",alignItems:"center"}}>
-            <Avatar />
+            <Avatar src={UserIcon} />
           </DialogContent>
           <DialogActions>
-            <Fab style={{color:"red"}} aria-label="Add" >
+            <Fab style={{color:"red"}} aria-label="Add" onClick={leaveRoom} >
                 <CallEnd />   
             </Fab>
           </DialogActions>

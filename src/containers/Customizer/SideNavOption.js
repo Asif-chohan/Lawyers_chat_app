@@ -38,9 +38,9 @@ class Customizer extends React.Component {
       <div className="side-nav-option">
 
         <div className="mb-1">
-          <h3 className="mb-1 mt-4">Navigation Style</h3>
+          <h3 className="mb-1 mt-4"></h3>
           <div className="text-left py-3">
-            <FormControl className="d-block" component="fieldset" required>
+            {/* <FormControl className="d-block" component="fieldset" required>
               <RadioGroup className="sidenav-dir"
                           aria-label="nav-style"
                           name="navStyle"
@@ -55,10 +55,10 @@ class Customizer extends React.Component {
                   <Radio/>} value={VERTICAL_NAVIGATION} label="Vertical"/>
 
               </RadioGroup>
-            </FormControl>
+            </FormControl> */}
           </div>
         </div>
-        {navigationStyle === HORIZONTAL_NAVIGATION ? <ButtonGroup>
+        {/* {navigationStyle === HORIZONTAL_NAVIGATION ? <ButtonGroup>
             <Button color="default"
                     className={`jr-btn  ${horizontalNavPosition === INSIDE_THE_HEADER && 'active' } `}
                     onClick={() => {
@@ -87,7 +87,7 @@ class Customizer extends React.Component {
                     className={`jr-btn ${drawerType === MINI_DRAWER && 'active' } `}
                     onClick={this.setMiniDrawer.bind(this)}>Mini</Button>
           </ButtonGroup>
-        }
+        } */}
 
 
       </div>);

@@ -198,7 +198,7 @@ class App extends Component {
                   />
                   <Route path="/signin" component={SignIn} />
                   <Route exact path="/signup" component={SignUp} />
-                  <Route exact path="/signup/uploadImg" component={UploadImg} />
+                  {/* <Route exact path="/signup/uploadImg" component={UploadImg} /> */}
                   <Route
                     component={asyncComponent(() =>
                       import("app/routes/extraPages/routes/404")

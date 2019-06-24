@@ -21,6 +21,8 @@ import CustomScrollbars from "util/CustomScrollbars";
 import { getAllUsers } from "../../../../actions/user";
 import { sendCall, receCall } from "../../../../actions/chatAction";
 import Video from "twilio-video";
+import placeholderImage from "../../../../assets/images/placeholder.jpg"
+import Typography from '@material-ui/core/Typography';
 
 // dialog imports
 import Dialog from "@material-ui/core/Dialog";
@@ -200,7 +202,8 @@ class ChatPanel extends Component {
             <div className="chat-avatar mr-2">
               <div className="chat-avatar-mode">
                 <img
-                  src={selectedUser.thumb}
+                  // src={selectedUser.thumb}
+                  src={placeholderImage}
                   className="rounded-circle size-60"
                   alt=""
                 />
@@ -265,6 +268,9 @@ class ChatPanel extends Component {
   };
 
   ChatUsers = () => {
+    // const {name, email}=this.props.user;
+    var name=this.props.user.name;
+    var email=this.props.user.email;
     return (
       <div className="chat-sidenav-main">
         <div className="chat-sidenav-header">
@@ -290,24 +296,35 @@ class ChatPanel extends Component {
 
             <div className="module-user-info d-flex flex-column justify-content-center">
               <div className="module-title">
-                <h5 className="mb-0">Robert Johnson</h5>
+                <h5 className="mb-0">{name}</h5>
               </div>
               <div className="module-user-detail">
-                <span className="jr-link text-grey">robert@example.com</span>
+                <span className="jr-link text-grey">{email}</span>
               </div>
             </div>
           </div>
 
           <div className="search-wrapper">
             <SearchBox
-              placeholder="Search or start new chat"
+              placeholder="Search to start new chat"
               value={this.state.searchChatUser}
+              onChange={(e)=>{
+                  console.log(e.target.value)
+                  this.setState({
+                    searchChatUser:e.target.value
+                  })
+              }}
             />
           </div>
         </div>
 
         <div className="chat-sidenav-content">
           <AppBar position="static" className="no-shadow chat-tabs-header">
+
+          {/* <Typography variant="subtitle1" className="text-center">
+            Contacts
+          </Typography> */}
+
             <Tabs
               className="chat-tabs"
               value={this.state.selectedTabIndex}
@@ -315,16 +332,26 @@ class ChatPanel extends Component {
               indicatorColor="primary"
               textColor="primary"
               variant="fullWidth"
+              style={{minHeight:"unset"}}
             >
-              <Tab label={<IntlMessages id="chat.chatUser" />} />
-              <Tab label={<IntlMessages id="chat.contacts" />} />
+              {/* <Tab label={<IntlMessages id="chat.chatUser" />} /> */}
+              {/* <Tab label={<IntlMessages id="chat.contacts" />} /> */}
+
+              <Typography style={{width:"-webkit-fill-available",color:"gray"}} variant="subtitle1" className="text-center">
+            Contacts
+          </Typography>
+
+
+
             </Tabs>
+
+
           </AppBar>
-          <SwipeableViews
+          {/* <SwipeableViews
             index={this.state.selectedTabIndex}
             onChangeIndex={this.handleChangeIndex}
-          >
-            <CustomScrollbars
+          > */}
+            {/* <CustomScrollbars
               className="chat-sidenav-scroll scrollbar"
               style={{
                 height:
@@ -342,7 +369,7 @@ class ChatPanel extends Component {
                   onSelectUser={this.onSelectUser.bind(this)}
                 />
               )}
-            </CustomScrollbars>
+            </CustomScrollbars> */}
 
             <CustomScrollbars
               className="chat-sidenav-scroll scrollbar"
@@ -357,13 +384,16 @@ class ChatPanel extends Component {
                 <div className="p-5">{this.state.userNotFound}</div>
               ) : (
                 <ContactList
-                  contactList={this.state.contactList}
+                  contactList    = {this.state.contactList.filter(item=>{
+                    var searchText=this.state.searchChatUser.toLowerCase();
+                    return item.name.toLowerCase().includes(searchText) // ||  item.email.toLowerCase().includes(searchText) 
+                  })}
                   selectedSectionId={this.state.selectedSectionId}
                   onSelectUser={this.onSelectUser.bind(this)}
                 />
               )}
             </CustomScrollbars>
-          </SwipeableViews>
+          {/* </SwipeableViews> */}
         </div>
       </div>
     );

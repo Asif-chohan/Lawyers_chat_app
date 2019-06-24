@@ -94,7 +94,8 @@ io.on("connection", function(socket) {
         res.forEach(item => {
           let name = item.name;
           let _id = item._id;
-          let obj = { _id, name };
+          let email = item.email
+          let obj = { _id, name, email };
           userArray.push(obj);
         });
 
@@ -105,7 +106,11 @@ io.on("connection", function(socket) {
       });
   });
   socket.on("sendCall", data => {
-    io.sockets.in(data.user._id).emit("recCall", data.roomName);
+    let dataToSend = {
+      roomName: data.roomName,
+      callingUser: data.callingUser
+    }
+    io.sockets.in(data.user._id).emit("recCall", dataToSend);
   });
 
   socket.on("disconnect", function() {

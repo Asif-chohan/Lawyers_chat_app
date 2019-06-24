@@ -21,8 +21,8 @@ import CustomScrollbars from "util/CustomScrollbars";
 import { getAllUsers } from "../../../../actions/user";
 import { sendCall, receCall } from "../../../../actions/chatAction";
 import Video from "twilio-video";
-import placeholderImage from "../../../../assets/images/placeholder.jpg"
-import Typography from '@material-ui/core/Typography';
+import placeholderImage from "../../../../assets/images/placeholder.jpg";
+import Typography from "@material-ui/core/Typography";
 
 import sound from "../../../../assets/sound.mp3";
 // dialog imports
@@ -32,6 +32,7 @@ import Fab from "@material-ui/core/Fab";
 import CallEnd from "@material-ui/icons/CallEnd";
 import OutGoingCall from "../../../../components/Call/outgoingCall";
 import Call from "@material-ui/icons/Call";
+import IncomingCallScreen from "../../../../components/Call/incomingCall";
 
 function Transition(props) {
   return <Slide direction="up" {...props} />;
@@ -40,6 +41,7 @@ function Transition(props) {
 class ChatPanel extends Component {
   // call functions.....................................
   startCall = (user, callType) => {
+    console.log("callType", callType);
     if (!this.state.roomName.trim()) {
       this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
@@ -49,17 +51,17 @@ class ChatPanel extends Component {
       showOutGoingLoader: true,
       callType
     });
-    // let roomName = "newAsif";
-    let roomName = "";
-    if (callType === "outGoing") {
-      roomName = this.props.user._id + user._id;
-      console.log("Joining room '" + roomName + "'...");
-      this.setState({
-        roomName: roomName
-      })
-    } else {
-      roomName = this.state.roomName;
-    }
+    let roomName = "newAsif";
+    // let roomName = "";
+    // if (callType === "outGoing") {
+    //   roomName = this.props.user._id + user._id;
+    //   console.log("Joining room '" + roomName + "'...");
+    this.setState({
+      roomName: roomName
+    });
+    // } else {
+    //   roomName = this.state.roomName;
+    // }
 
     let connectOptions = {
       name: roomName
@@ -90,11 +92,8 @@ class ChatPanel extends Component {
 
   // Attaches a track to a specified DOM container
   attachParticipantTracks(participant, container) {
-    console.log(
-      "==========attachParticipantTracks==========================",
-      container
-    );
-    console.log(participant);
+    console.log("==========attachParticipantTracks===========", container);
+    console.log("gum log", participant);
     var tracks = Array.from(participant.tracks.values());
 
     console.log("===============attachParticipantTracks============", tracks);
@@ -115,12 +114,13 @@ class ChatPanel extends Component {
   };
 
   roomJoined = room => {
-    if(this.state.callType === "outGoing"){
-
-      this.props.sendCall(this.state.selectedUser, this.state.roomName)
+    if (this.state.callType === "outGoing") {
+      this.props.sendCall(
+        this.state.selectedUser,
+        this.state.roomName,
+        this.props.user
+      );
     }
-
-
 
     this.togglePlay();
 
@@ -198,7 +198,8 @@ class ChatPanel extends Component {
     this.setState({
       hasJoinedRoom: false,
       localMediaAvailable: false,
-      showOutGoingScreen: false
+      showOutGoingScreen: false,
+      showIncomingScreen: false
     });
   };
 
@@ -310,8 +311,8 @@ class ChatPanel extends Component {
 
   ChatUsers = () => {
     // const {name, email}=this.props.user;
-    var name=this.props.user.name;
-    var email=this.props.user.email;
+    var name = this.props.user.name;
+    var email = this.props.user.email;
     return (
       <div className="chat-sidenav-main">
         <div className="chat-sidenav-header">
@@ -349,11 +350,11 @@ class ChatPanel extends Component {
             <SearchBox
               placeholder="Search to start new chat"
               value={this.state.searchChatUser}
-              onChange={(e)=>{
-                  console.log(e.target.value)
-                  this.setState({
-                    searchChatUser:e.target.value
-                  })
+              onChange={e => {
+                console.log(e.target.value);
+                this.setState({
+                  searchChatUser: e.target.value
+                });
               }}
             />
           </div>
@@ -361,8 +362,7 @@ class ChatPanel extends Component {
 
         <div className="chat-sidenav-content">
           <AppBar position="static" className="no-shadow chat-tabs-header">
-
-          {/* <Typography variant="subtitle1" className="text-center">
+            {/* <Typography variant="subtitle1" className="text-center">
             Contacts
           </Typography> */}
 
@@ -373,26 +373,25 @@ class ChatPanel extends Component {
               indicatorColor="primary"
               textColor="primary"
               variant="fullWidth"
-              style={{minHeight:"unset"}}
+              style={{ minHeight: "unset" }}
             >
               {/* <Tab label={<IntlMessages id="chat.chatUser" />} /> */}
               {/* <Tab label={<IntlMessages id="chat.contacts" />} /> */}
 
-              <Typography style={{width:"-webkit-fill-available",color:"gray"}} variant="subtitle1" className="text-center">
-            Contacts
-          </Typography>
-
-
-
+              <Typography
+                style={{ width: "-webkit-fill-available", color: "gray" }}
+                variant="subtitle1"
+                className="text-center"
+              >
+                Contacts
+              </Typography>
             </Tabs>
-
-
           </AppBar>
           {/* <SwipeableViews
             index={this.state.selectedTabIndex}
             onChangeIndex={this.handleChangeIndex}
           > */}
-            {/* <CustomScrollbars
+          {/* <CustomScrollbars
               className="chat-sidenav-scroll scrollbar"
               style={{
                 height:
@@ -412,28 +411,28 @@ class ChatPanel extends Component {
               )}
             </CustomScrollbars> */}
 
-            <CustomScrollbars
-              className="chat-sidenav-scroll scrollbar"
-              style={{
-                height:
-                  this.props.width >= 1200
-                    ? "calc(100vh - 328px)"
-                    : "calc(100vh - 202px)"
-              }}
-            >
-              {this.state.contactList.length === 0 ? (
-                <div className="p-5">{this.state.userNotFound}</div>
-              ) : (
-                <ContactList
-                  contactList    = {this.state.contactList.filter(item=>{
-                    var searchText=this.state.searchChatUser.toLowerCase();
-                    return item.name.toLowerCase().includes(searchText) // ||  item.email.toLowerCase().includes(searchText) 
-                  })}
-                  selectedSectionId={this.state.selectedSectionId}
-                  onSelectUser={this.onSelectUser.bind(this)}
-                />
-              )}
-            </CustomScrollbars>
+          <CustomScrollbars
+            className="chat-sidenav-scroll scrollbar"
+            style={{
+              height:
+                this.props.width >= 1200
+                  ? "calc(100vh - 328px)"
+                  : "calc(100vh - 202px)"
+            }}
+          >
+            {this.state.contactList.length === 0 ? (
+              <div className="p-5">{this.state.userNotFound}</div>
+            ) : (
+              <ContactList
+                contactList={this.state.contactList.filter(item => {
+                  var searchText = this.state.searchChatUser.toLowerCase();
+                  return item.name.toLowerCase().includes(searchText); // ||  item.email.toLowerCase().includes(searchText)
+                })}
+                selectedSectionId={this.state.selectedSectionId}
+                onSelectUser={this.onSelectUser.bind(this)}
+              />
+            )}
+          </CustomScrollbars>
           {/* </SwipeableViews> */}
         </div>
       </div>
@@ -510,7 +509,8 @@ class ChatPanel extends Component {
       play: false,
       showOutGoingScreen: false,
       showOutGoingLoader: false,
-      callType: ""
+      callType: "",
+      showIncomingScreen: false
     };
   }
   handleChange = (event, value) => {
@@ -548,7 +548,8 @@ class ChatPanel extends Component {
     }
     if (nextProps.incomingCall) {
       this.setState({
-        roomName: nextProps.incomingRoomName
+        roomName: nextProps.incomingRoomName,
+        showIncomingScreen: true
       });
     }
   }
@@ -563,7 +564,7 @@ class ChatPanel extends Component {
   };
 
   render() {
-    const { incomingCall } = this.props;
+    const { incomingCall, callingUser } = this.props;
 
     const {
       loader,
@@ -572,8 +573,10 @@ class ChatPanel extends Component {
       hasJoinedRoom,
       showOutGoingScreen,
       selectedUser,
-      showOutGoingLoader
+      showOutGoingLoader,
+      showIncomingScreen
     } = this.state;
+    console.log("showIncomingScreen", showIncomingScreen);
     return (
       <div className="app-wrapper app-wrapper-module">
         <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
@@ -609,9 +612,17 @@ class ChatPanel extends Component {
               leaveRoom={this.leaveRoom}
             />
           )}
+          {showIncomingScreen && (
+            <IncomingCallScreen
+              // selectedUser={selectedUser}
+              leaveRoom={this.leaveRoom}
+              startCall={this.startCall}
+              callingUser={callingUser}
+            />
+          )}
           <Dialog
             fullScreen
-            open={false}
+            open={hasJoinedRoom}
             onClose={this.handleClose}
             TransitionComponent={Transition}
           >
@@ -635,11 +646,6 @@ class ChatPanel extends Component {
   }
 }
 
-// const mapStateToProps = ({ settings }) => {
-//   const { width } = settings;
-//   return { width };
-// };
-
 const mapStateToProps = state => {
   return {
     width: state.settings.width,
@@ -651,7 +657,8 @@ const mapStateToProps = state => {
     tokan: state.chatReducer.tokan,
     loader: state.chatReducer.loader,
     incomingCall: state.chatReducer.incomingCall,
-    incomingRoomName: state.chatReducer.incomingRoomName
+    incomingRoomName: state.chatReducer.incomingRoomName,
+    callingUser: state.chatReducer.callingUser
   };
 };
 export default connect(

@@ -21,10 +21,11 @@ export const getTokan = id => {
   };
 };
 
-export const sendCall = (user, room)=>{
+export const sendCall = (user, room, callingUser)=>{
   let data ={
     user: user,
-    roomName: room
+    roomName: room,
+    callingUser: callingUser
   }
   return(dispatch)=>{
     socket.emit("sendCall", data);

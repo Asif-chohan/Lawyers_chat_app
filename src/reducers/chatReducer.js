@@ -6,6 +6,7 @@ const INIT_STATE = {
   getTokanStatus: "not done",
   incomingCall: false,
   incomingRoomName: "",
+  callingUser: {}
   
 };
 
@@ -22,7 +23,8 @@ export default (state = INIT_STATE, action) => {
       return{
         ...state,
         incomingCall: true,
-        incomingRoomName: action.payload,
+        incomingRoomName: action.payload.roomName,
+        callingUser: action.payload.callingUser,
         loader: new Date()
       }
 

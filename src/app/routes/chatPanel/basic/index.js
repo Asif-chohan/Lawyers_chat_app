@@ -38,17 +38,19 @@ class ChatPanel extends Component {
   // call functions.....................................
   startCall = user => {
     if (!this.state.roomName.trim()) {
-      this.setState({ roomNameErr: true });
+      this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
     }
 
+    this.setState({
+      showOutGoingLoader: true
+    });
     let roomName = "newAsif";
     // let roomName = this.props.user._id + user._id;
     console.log("Joining room '" + roomName + "'...");
 
     let connectOptions = {
       name: roomName
-      // video: {width: 450}
     };
 
     if (this.state.previewTracks) {
@@ -110,7 +112,8 @@ class ChatPanel extends Component {
       activeRoom: room,
       localMediaAvailable: true,
       hasJoinedRoom: true,
-      showOutGoingScreen: true
+      showOutGoingScreen: true,
+      showOutGoingLoader: false
     });
 
     // Attach LocalParticipant's Tracks, if not already attached.
@@ -174,18 +177,23 @@ class ChatPanel extends Component {
   leaveRoom = () => {
     this.togglePlay();
     this.state.activeRoom.disconnect();
-    // this.setState({
-    //   hasJoinedRoom: false,
-    //   localMediaAvailable: false,
-    //   showOutGoingScreen: false
-    // });
+    this.setState({
+      hasJoinedRoom: false,
+      localMediaAvailable: false,
+      showOutGoingScreen: false
+    });
   };
 
   // end of call code......................................................
 
   Communication = () => {
     const { incomingCall } = this.props;
-    const { message, selectedUser, conversation } = this.state;
+    const {
+      message,
+      selectedUser,
+      conversation,
+      showOutGoingLoader
+    } = this.state;
     // const { conversationData } = conversation;
     console.log("selecteduser", selectedUser);
 
@@ -262,14 +270,18 @@ class ChatPanel extends Component {
               </div>
             </div> */}
 
-            <div className="chat-sent" style={{margin: "auto"}}>
-              <Fab
-                style={{ color: "green", marginRight: "20px" }}
-                aria-label="Add"
-                onClick={this.startCall}
-              >
-                <Call />
-              </Fab>
+            <div className="chat-sent" style={{ margin: "auto" }}>
+              {showOutGoingLoader ? (
+                <CircularProgress />
+              ) : (
+                <Fab
+                  style={{ color: "green", marginRight: "20px" }}
+                  aria-label="Add"
+                  onClick={() => this.startCall(selectedUser)}
+                >
+                  <Call />
+                </Fab>
+              )}
             </div>
           </div>
         </div>
@@ -450,7 +462,8 @@ class ChatPanel extends Component {
       hasJoinedRoom: false,
       activeRoom: "", // Track the current active room,
       play: false,
-      showOutGoingScreen: false
+      showOutGoingScreen: false,
+      showOutGoingLoader: false
     };
   }
   handleChange = (event, value) => {
@@ -511,7 +524,8 @@ class ChatPanel extends Component {
       drawerState,
       hasJoinedRoom,
       showOutGoingScreen,
-      selectedUser
+      selectedUser,
+      showOutGoingLoader
     } = this.state;
     return (
       <div className="app-wrapper app-wrapper-module">
@@ -542,15 +556,15 @@ class ChatPanel extends Component {
               this.showCommunication()
             )}
           </div>
-          {/* {showOutGoingScreen && (
+          {showOutGoingScreen && (
             <OutGoingCall
               selectedUser={selectedUser}
               leaveRoom={this.leaveRoom}
             />
-          )} */}
+          )}
           <Dialog
             fullScreen
-            open={hasJoinedRoom}
+            open={false}
             onClose={this.handleClose}
             TransitionComponent={Transition}
           >

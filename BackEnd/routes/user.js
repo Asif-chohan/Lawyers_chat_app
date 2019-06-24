@@ -4,8 +4,24 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 var router = express.Router();
 var userSchemea = require("../models/usersSchema");
+var multer=require("multer");
 
-router.post("/signup", (req, res) => {
+
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './media/');
+  },
+  filename: function (req, file, cb) {
+      cb(null, `${Date.now()}-${file.originalname}`)
+    }
+});
+
+const upload = multer({ storage });
+
+
+router.post("/signup",upload.single("userProfile"), (req, res) => {
   console.log("singup", req.body);
 
   userSchemea.findOne({ email: req.body.email }, (err, user) => {
@@ -66,6 +82,7 @@ router.get("/authenticate", (req, res) => {
 });
 
 router.post("/emailVerification", (req, res) => {
+  console.log(req.body);
   userSchemea.findOne({ email: req.body.email }, (err, user) => {
     if (user) {
       res.status(200).json("email already in use");
@@ -74,5 +91,15 @@ router.post("/emailVerification", (req, res) => {
     }
   });
 });
+// router.post("/verifyEmail", (req, res) => {
+//   userSchemea.findOne({ email: req.body }, (err, user) => {
+//     if (user) {
+//       res.status(200).json("email already in use");
+//     } else {
+//       res.status(200).json("readytouse");
+//     }
+//   });
+// });
+
 
 module.exports = router;

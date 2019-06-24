@@ -12,6 +12,18 @@ export const LOG_OUT = "LOG_OUT";
 export const LOG_OUT_ERR = "LOG_OUT_ERR";
 export const GET_ALL = "GET_ALL";
 export const GET_ALL_ERR = "GET_ALL_ERR";
+export const EMAIL_IN_USE = "EMAIL_IN_USE"
+export const EMAIL_IN_USE_ERR = "EMAIL_IN_USE_ERR"
+export const EMAIL_READY_TO_USE = "EMAIL_READY_TO_USE"
+
+
+        
+        
+const config = {
+  headers: {
+    'content-type' : 'multipart/form-data'
+  }
+}
 
 export const singUp = data => {
   console.log("======in action==============================");
@@ -19,7 +31,7 @@ export const singUp = data => {
   console.log("====================================");
   return disptach => {
     axios
-      .post(url + "user/signup", data)
+      .post(url + "user/signup", data,config)
       .then(res => {
         if (res.data === "Account has been created!") {
           disptach({
@@ -142,3 +154,35 @@ export const getAllUsers = () => {
     });
   };
 };
+
+export const verifyEmailFromServer = (data) => {
+  return dispatch => {
+    axios.post(url + "user/emailVerification", data)
+      .then(res => {
+        console.log("res", res);
+        if (res.data === "readytouse") {
+          dispatch({
+            type: EMAIL_READY_TO_USE,
+            data
+          })
+        } else if(res.data === "email already in use") {
+          toastr.error("Email already registered")
+          dispatch({
+            type: EMAIL_IN_USE
+          })
+        }
+        else {
+          dispatch({
+            type:EMAIL_IN_USE_ERR
+          })
+        }
+      })
+      .catch(err => {
+        console.log("err", err)
+        toastr.error("Error occured! Try again later")
+        dispatch({
+          type: EMAIL_IN_USE_ERR
+        })
+      })
+  }
+}

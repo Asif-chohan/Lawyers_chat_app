@@ -12,7 +12,7 @@ export const store = configureStore();
 
 const MainApp = () => (
   <Provider store={store}>
-    <App />
+       <App />
   </Provider>
 );
 

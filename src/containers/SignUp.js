@@ -93,11 +93,13 @@ class SignUp extends React.Component {
         email: this.state.email.toLowerCase(),
         password: this.state.password
       };
-      if (this.state.email != "" && this.validateEmail(this.state.email)) {
-        this.props.verifyEmailFromServer(data)
-      }
-      // this.props.singUp(data);
+      // if (this.state.email != "" && this.validateEmail(this.state.email)) {
+      //   this.props.verifyEmailFromServer(data)
+      // }
+      this.props.singUp(data);
       // this.props.history.push("/signup/uploadImg")
+      this.props.history.push("/signin")
+
     }
   };
 

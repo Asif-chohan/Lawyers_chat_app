@@ -31,7 +31,7 @@ export const singUp = data => {
   console.log("====================================");
   return disptach => {
     axios
-      .post(url + "user/signup", data,config)
+      .post(url + "user/signup", data)
       .then(res => {
         if (res.data === "Account has been created!") {
           disptach({

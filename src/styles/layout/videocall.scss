@@ -8,9 +8,11 @@ video {
   z-index: 200 !important;
   right: 100px !important;
   bottom: 50px !important;
+  height: 100px !important;
 }
 .remoteVideo video {
   width: 100%;
+  height: 100vh;
 }
 .endCall {
   position: absolute !important;

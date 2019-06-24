@@ -21,7 +21,7 @@ import CustomScrollbars from "util/CustomScrollbars";
 import { getAllUsers } from "../../../../actions/user";
 import { sendCall, receCall } from "../../../../actions/chatAction";
 import Video from "twilio-video";
-
+import sound from "../../../../assets/sound.mp3";
 // dialog imports
 import Dialog from "@material-ui/core/Dialog";
 import Slide from "@material-ui/core/Slide";
@@ -46,6 +46,7 @@ class ChatPanel extends Component {
 
     let connectOptions = {
       name: roomName
+      // video: {width: 450}
     };
 
     if (this.state.previewTracks) {
@@ -99,6 +100,7 @@ class ChatPanel extends Component {
   };
 
   roomJoined = room => {
+    this.togglePlay();
     // Called when a participant joins a room
     console.log("Joined as '" + this.state.identity + "'");
     this.setState({
@@ -146,6 +148,7 @@ class ChatPanel extends Component {
     room.on("participantDisconnected", participant => {
       console.log("Participant '" + participant.identity + "' left the room");
       this.detachParticipantTracks(participant);
+      this.leaveRoom();
     });
 
     // Once the LocalParticipant leaves the room, detach the Tracks
@@ -435,7 +438,8 @@ class ChatPanel extends Component {
       previewTracks: null,
       localMediaAvailable: false,
       hasJoinedRoom: false,
-      activeRoom: "" // Track the current active room
+      activeRoom: "", // Track the current active room,
+      play: false
     };
   }
   handleChange = (event, value) => {
@@ -477,6 +481,15 @@ class ChatPanel extends Component {
       });
     }
   }
+
+  audio = new Audio(sound);
+
+  // play Audio
+  togglePlay = () => {
+    this.setState({ play: !this.state.play }, () => {
+      this.state.play ? this.audio.play() : this.audio.pause();
+    });
+  };
 
   render() {
     const { incomingCall } = this.props;

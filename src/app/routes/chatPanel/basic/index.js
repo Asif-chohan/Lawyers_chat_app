@@ -36,18 +36,27 @@ function Transition(props) {
 
 class ChatPanel extends Component {
   // call functions.....................................
-  startCall = user => {
+  startCall = (user, callType) => {
     if (!this.state.roomName.trim()) {
       this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
     }
 
     this.setState({
-      showOutGoingLoader: true
+      showOutGoingLoader: true,
+      callType
     });
-    let roomName = "newAsif";
-    // let roomName = this.props.user._id + user._id;
-    console.log("Joining room '" + roomName + "'...");
+    // let roomName = "newAsif";
+    let roomName = "";
+    if (callType === "outGoing") {
+      roomName = this.props.user._id + user._id;
+      console.log("Joining room '" + roomName + "'...");
+      this.setState({
+        roomName: roomName
+      })
+    } else {
+      roomName = this.state.roomName;
+    }
 
     let connectOptions = {
       name: roomName
@@ -62,7 +71,6 @@ class ChatPanel extends Component {
     Video.connect(this.state.token, connectOptions).then(
       this.roomJoined,
 
-      this.props.sendCall(user, roomName),
       error => {
         alert("Could not connect to Twilio: " + error.message);
       }
@@ -104,6 +112,13 @@ class ChatPanel extends Component {
   };
 
   roomJoined = room => {
+    if(this.state.callType === "outGoing"){
+
+      this.props.sendCall(this.state.selectedUser, this.state.roomName)
+    }
+
+
+
     this.togglePlay();
 
     // Called when a participant joins a room
@@ -277,7 +292,7 @@ class ChatPanel extends Component {
                 <Fab
                   style={{ color: "green", marginRight: "20px" }}
                   aria-label="Add"
-                  onClick={() => this.startCall(selectedUser)}
+                  onClick={() => this.startCall(selectedUser, "outGoing")}
                 >
                   <Call />
                 </Fab>
@@ -463,7 +478,8 @@ class ChatPanel extends Component {
       activeRoom: "", // Track the current active room,
       play: false,
       showOutGoingScreen: false,
-      showOutGoingLoader: false
+      showOutGoingLoader: false,
+      callType: ""
     };
   }
   handleChange = (event, value) => {

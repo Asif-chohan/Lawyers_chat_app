@@ -227,7 +227,7 @@ class ChatPanel extends Component {
       showIncomingScreen: false,
       showCamera: false
     });
-    if(outGoingLeave === "outGoingLeave"){
+    if(leaveType === "outGoingLeave"){
       this.props.outGoingLeave(this.state.selectedUser)
     }
   };
@@ -583,7 +583,7 @@ class ChatPanel extends Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log('=============nextProps.outGoingDeclineStatus=============');
+    console.log('=nextProps.outGoingDeclineStatus=======');
     console.log(nextProps.outGoingDeclineStatus);
     console.log('====================================');
     if (nextProps.getAllStatus === "done") {

@@ -625,7 +625,7 @@ class ChatPanel extends Component {
     console.log("showIncomingScreen", showIncomingScreen);
     return (
       <div className="app-wrapper app-wrapper-module">
-        {showCamera ? (
+        {/* {showCamera ? ( */}
           <div className="flex-item">
             <div ref="remoteMedia" className="remoteVideo">
               <div ref="localMedia" className="localVideo" />
@@ -639,7 +639,7 @@ class ChatPanel extends Component {
               </Fab>
             </div>
           </div>
-        ) : (
+        {/* ) : ( */}
           <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
             <div className="chat-module-box">
               <div className="d-block d-xl-none">
@@ -689,7 +689,7 @@ class ChatPanel extends Component {
 
             {/* </Dialog> */}
           </div>
-        )}
+        {/* )} */}
       </div>
     );
   }

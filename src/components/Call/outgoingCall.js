@@ -93,11 +93,11 @@ class CustomizedDialogDemo extends React.Component {
           fullScreen
           onClose={this.handleClose}
           aria-labelledby="customized-dialog-title"
-          open={true}
+          open={false}
         >
           <DialogTitle id="customized-dialog-title" >
             <Typography  style={{color:"white",fontSize:"1.4em"}}>
-                {selectedUser.name}
+                {/* {selectedUser.name} */}
             </Typography>
             <Typography color="secondary" style={{color:"#fff"}}>
                 calling

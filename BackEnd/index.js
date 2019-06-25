@@ -86,6 +86,10 @@ io.on("connection", function(socket) {
     });
   });
 
+  socket.on("declineCall",(data)=>{
+    io.sockets.in(data.user._id).emit("declineKnow", data);
+  })
+
   socket.on("getAll", () => {
     userSchema
       .find()

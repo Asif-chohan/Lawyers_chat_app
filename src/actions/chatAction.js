@@ -5,6 +5,7 @@ export const SEND_CALL = "SEND_CALL"
 export const SEND_CALL_ERR = "SEND_CALL_ERR"
 export const REC_CALL = "REC_CALL"
 export const REC_CALL_ERR = "REC_CALL_ERR"
+export const DECLINE_KNOW = "DECLINE_KNOW"
 
 export const getTokan = id => {
   return dispatch => {
@@ -29,9 +30,14 @@ export const sendCall = (user, room, callingUser)=>{
   }
   return(dispatch)=>{
     socket.emit("sendCall", data);
-    // dispatch({
+    socket.emit("declineCall", data);
+    socket.on("declineKnow", (data)=>{
+      dispatch({
+        type: DECLINE_KNOW,
+        payload: data
+      })
+    })
     
-    // })
   }
 }
 

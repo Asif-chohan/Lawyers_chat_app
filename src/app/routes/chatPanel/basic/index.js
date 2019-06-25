@@ -202,6 +202,15 @@ class ChatPanel extends Component {
       showIncomingScreen: false
     });
   };
+  declineCall = () => {
+    this.togglePlay();
+    this.setState({
+      hasJoinedRoom: false,
+      localMediaAvailable: false,
+      showOutGoingScreen: false,
+      showIncomingScreen: false
+    });
+  };
 
   // end of call code......................................................
 
@@ -547,10 +556,14 @@ class ChatPanel extends Component {
       });
     }
     if (nextProps.incomingCall) {
+      this.togglePlay();
       this.setState({
         roomName: nextProps.incomingRoomName,
         showIncomingScreen: true
       });
+    }
+    if (nextProps.callDeclinestatus === "done") {
+      this.leaveRoom();
     }
   }
 
@@ -615,14 +628,14 @@ class ChatPanel extends Component {
           {showIncomingScreen && (
             <IncomingCallScreen
               // selectedUser={selectedUser}
-              leaveRoom={this.leaveRoom}
+              leaveRoom={this.declineCall}
               startCall={this.startCall}
               callingUser={callingUser}
             />
           )}
           <Dialog
             fullScreen
-            open={hasJoinedRoom}
+            open={false}
             onClose={this.handleClose}
             TransitionComponent={Transition}
           >
@@ -658,7 +671,8 @@ const mapStateToProps = state => {
     loader: state.chatReducer.loader,
     incomingCall: state.chatReducer.incomingCall,
     incomingRoomName: state.chatReducer.incomingRoomName,
-    callingUser: state.chatReducer.callingUser
+    callingUser: state.chatReducer.callingUser,
+    callDeclinestatus: state.chatReducer.callDeclinestatus
   };
 };
 export default connect(

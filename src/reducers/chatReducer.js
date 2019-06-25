@@ -1,4 +1,4 @@
-import { GET_TOKAN, REC_CALL } from "../actions/chatAction";
+import { GET_TOKAN, REC_CALL, DECLINE_KNOW } from "../actions/chatAction";
 
 const INIT_STATE = {
   loader: false,
@@ -6,8 +6,8 @@ const INIT_STATE = {
   getTokanStatus: "not done",
   incomingCall: false,
   incomingRoomName: "",
-  callingUser: {}
-  
+  callingUser: {},
+  callDeclinestatus: "not done"
 };
 
 export default (state = INIT_STATE, action) => {
@@ -17,16 +17,24 @@ export default (state = INIT_STATE, action) => {
         ...state,
         tokan: action.payload,
         getTokanStatus: "done",
-        loader: new Date()
+        loader: new Date(),
+        callDeclinestatus: "not done"
       };
-      case REC_CALL: 
-      return{
+    case REC_CALL:
+      return {
         ...state,
         incomingCall: true,
         incomingRoomName: action.payload.roomName,
         callingUser: action.payload.callingUser,
+        loader: new Date(),
+        callDeclinestatus: "not done"
+      };
+    case DECLINE_KNOW:
+      return {
+        ...state,
+        callDeclinestatus: "done",
         loader: new Date()
-      }
+      };
 
     default:
       return state;

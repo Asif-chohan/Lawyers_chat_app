@@ -100,7 +100,7 @@ class CustomizedDialogDemo extends React.Component {
                 {/* {selectedUser.name} */}
             </Typography>
             <Typography color="secondary" style={{color:"#fff"}}>
-                calling
+                calling (outgoing)
             </Typography>
 
           </DialogTitle>

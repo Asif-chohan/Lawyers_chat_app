@@ -102,7 +102,7 @@ class CustomizedDialogDemo extends React.Component {
               {/* {callingUser.name} */}
             </Typography>
             <Typography style={{ color: "#a5d6a7" }} color="secondary">
-              calling
+              calling (incoming)
             </Typography>
           </DialogTitle>
           <DialogContent style={{ display: "flex", alignItems: "center" }}>

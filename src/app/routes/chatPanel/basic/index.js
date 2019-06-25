@@ -81,7 +81,7 @@ class ChatPanel extends Component {
       this.roomJoined,
 
       error => {
-        alert("Could not connect to Twilio: " + error.message);
+        alert("Could not connect to Server: " + error.message);
       }
     );
   };
@@ -124,6 +124,9 @@ class ChatPanel extends Component {
         this.state.roomName,
         this.props.user
       );
+      this.setState({
+        showOutGoingScreen: true,
+      })
     }
     this.startPlay();
     // this.togglePlay();
@@ -134,7 +137,6 @@ class ChatPanel extends Component {
       activeRoom: room,
       localMediaAvailable: true,
       hasJoinedRoom: true,
-      showOutGoingScreen: true,
       showOutGoingLoader: false,
       showIncomingScreen: false
     });
@@ -171,6 +173,12 @@ class ChatPanel extends Component {
 
     // When a Participant adds a Track, attach it to the DOM.
     room.on("trackAdded", (track, participant) => {
+      this.setState({
+        showIncomingScreen: false,
+        showOutGoingScreen: false,
+        showCamera: true
+      });
+      this.endPlay();
       console.log("====================================");
       console.log("difffffffff");
       console.log("====================================");

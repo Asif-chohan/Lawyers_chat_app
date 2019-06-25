@@ -95,7 +95,7 @@ class CustomizedDialogDemo extends React.Component {
           fullScreen
           onClose={this.handleClose}
           aria-labelledby="customized-dialog-title"
-          open={false}
+          open={true}
         >
           <DialogTitle id="customized-dialog-title">
             <Typography style={{ color: "white", fontSize: "1.4em" }}>

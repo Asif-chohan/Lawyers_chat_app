@@ -622,7 +622,8 @@ class ChatPanel extends Component {
       showIncomingScreen,
       showCamera
     } = this.state;
-    console.log("showIncomingScreen", showIncomingScreen);
+
+    console.log("showCamera", showCamera);
     return (
       <div className="app-wrapper app-wrapper-module">
         {/* {showCamera ? ( */}
@@ -641,48 +642,49 @@ class ChatPanel extends Component {
             )}
           </div>
         </div>
-        {/* ) : ( */}
-        <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
-          <div className="chat-module-box">
-            <div className="d-block d-xl-none">
-              {/* {showLocalTrack} */}
 
-              <Drawer
-                open={drawerState}
-                onClose={this.onToggleDrawer.bind(this)}
-              >
-                {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
-              </Drawer>
-            </div>
-
-            <div className="chat-sidenav d-none d-xl-flex">
-              {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
-            </div>
-            {loader ? (
-              <div
-                className="loader-view w-100"
-                style={{ height: "calc(100vh - 120px)" }}
-              >
-                <CircularProgress />
+        {!showCamera && (
+          <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
+            <div className="chat-module-box">
+              <div className="d-block d-xl-none">
+                <Drawer
+                  open={drawerState}
+                  onClose={this.onToggleDrawer.bind(this)}
+                >
+                  {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
+                </Drawer>
               </div>
-            ) : (
-              this.showCommunication()
+
+              <div className="chat-sidenav d-none d-xl-flex">
+                {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
+              </div>
+              {loader ? (
+                <div
+                  className="loader-view w-100"
+                  style={{ height: "calc(100vh - 120px)" }}
+                >
+                  <CircularProgress />
+                </div>
+              ) : (
+                this.showCommunication()
+              )}
+            </div>
+            {showOutGoingScreen && (
+              <OutGoingCall
+                selectedUser={selectedUser}
+                leaveRoom={this.leaveRoom}
+              />
+            )}
+            {showIncomingScreen && (
+              <IncomingCallScreen
+                leaveRoom={this.declineCall}
+                startCall={this.startCall}
+                callingUser={callingUser}
+              />
             )}
           </div>
-          {showOutGoingScreen && (
-            <OutGoingCall
-              selectedUser={selectedUser}
-              leaveRoom={this.leaveRoom}
-            />
-          )}
-          {showIncomingScreen && (
-            <IncomingCallScreen
-              leaveRoom={this.declineCall}
-              startCall={this.startCall}
-              callingUser={callingUser}
-            />
-          )}
-        </div>
+        )}
+
         {/* )} */}
       </div>
     );

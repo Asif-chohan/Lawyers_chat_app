@@ -19,7 +19,7 @@ import SearchBox from "components/SearchBox/index";
 import IntlMessages from "util/IntlMessages";
 import CustomScrollbars from "util/CustomScrollbars";
 import { getAllUsers } from "../../../../actions/user";
-import { sendCall, receCall } from "../../../../actions/chatAction";
+import { sendCall, receCall, declineCall } from "../../../../actions/chatAction";
 import Video from "twilio-video";
 import placeholderImage from "../../../../assets/images/placeholder.jpg";
 import Typography from "@material-ui/core/Typography";
@@ -203,6 +203,7 @@ class ChatPanel extends Component {
     });
   };
   declineCall = () => {
+    this.props.declineCall(this.props.callingUser)
     this.togglePlay();
     this.setState({
       hasJoinedRoom: false,
@@ -633,26 +634,26 @@ class ChatPanel extends Component {
               callingUser={callingUser}
             />
           )}
-          <Dialog
+          {/* <Dialog
             fullScreen
             open={false}
             onClose={this.handleClose}
             TransitionComponent={Transition}
-          >
+          > */}
             <div className="flex-item">
               <div ref="remoteMedia" className="remoteVideo">
                 <div ref="localMedia" className="localVideo" />
-                <Fab
+                {/* <Fab
                   color="secondary"
                   aria-label="Add"
                   className="endCall"
                   onClick={this.leaveRoom}
                 >
                   <CallEnd />
-                </Fab>
+                </Fab> */}
               </div>
             </div>
-          </Dialog>
+          {/* </Dialog> */}
         </div>
       </div>
     );
@@ -677,5 +678,5 @@ const mapStateToProps = state => {
 };
 export default connect(
   mapStateToProps,
-  { getAllUsers, sendCall, receCall }
+  { getAllUsers, sendCall, receCall, declineCall }
 )(ChatPanel);

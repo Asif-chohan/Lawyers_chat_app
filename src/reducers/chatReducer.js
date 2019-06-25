@@ -30,9 +30,12 @@ export default (state = INIT_STATE, action) => {
         callDeclinestatus: "not done"
       };
     case DECLINE_KNOW:
+      console.log('===============action.payload=====================')
+      console.log(action.payload)
+      console.log('====================================')
       return {
         ...state,
-        callDeclinestatus: "done",
+        callDeclinestatus: action.payload === "declined" ? "done" : "not done",
         loader: new Date()
       };
 

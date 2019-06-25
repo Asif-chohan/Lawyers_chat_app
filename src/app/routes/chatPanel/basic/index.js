@@ -56,10 +56,10 @@ class ChatPanel extends Component {
       showOutGoingLoader: true,
       callType
     });
-    if(callType === "attndCall"){
+    if (callType === "attndCall") {
       this.setState({
         callAttendLoader: true
-      })
+      });
     }
     // let roomName = "newAsif";
     let roomName = "";
@@ -174,7 +174,7 @@ class ChatPanel extends Component {
         showIncomingScreen: false,
         showOutGoingScreen: false,
         showCamera: true,
-        callAttendLoader: false,
+        callAttendLoader: false
       });
     });
 
@@ -184,8 +184,7 @@ class ChatPanel extends Component {
         showIncomingScreen: false,
         showOutGoingScreen: false,
         showCamera: true,
-        callAttendLoader: false,
-
+        callAttendLoader: false
       });
       this.endPlay();
       console.log("====================================");
@@ -276,8 +275,6 @@ class ChatPanel extends Component {
     // const { conversationData } = conversation;
     console.log("selecteduser", selectedUser);
 
-   
-
     return (
       <div className="chat-main">
         <div className="chat-main-header">
@@ -314,17 +311,13 @@ class ChatPanel extends Component {
                 ? "calc(100vh - 300px)"
                 : "calc(100vh - 255px)"
           }}
-        >
-          
-        </CustomScrollbars>
+        ></CustomScrollbars>
 
         <div className="chat-main-footer">
           <div
             className="d-flex flex-row align-items-center"
             style={{ maxHeight: 51 }}
           >
-           
-
             <div className="chat-sent" style={{ margin: "auto" }}>
               {showOutGoingLoader ? (
                 <CircularProgress />
@@ -347,6 +340,7 @@ class ChatPanel extends Component {
   ChatUsers = () => {
     var name = this.props.user.name;
     var email = this.props.user.email;
+    const { onLineUserArray } = this.state;
     return (
       <div className="chat-sidenav-main">
         <div className="chat-sidenav-header">
@@ -464,6 +458,7 @@ class ChatPanel extends Component {
                 })}
                 selectedSectionId={this.state.selectedSectionId}
                 onSelectUser={this.onSelectUser.bind(this)}
+                onlineUsers={onLineUserArray}
               />
             )}
           </CustomScrollbars>
@@ -546,7 +541,8 @@ class ChatPanel extends Component {
       callType: "",
       showIncomingScreen: false,
       showCamera: false,
-      callAttendLoader: false
+      callAttendLoader: false,
+      onLineUserArray:[]
     };
   }
   handleChange = (event, value) => {
@@ -577,12 +573,14 @@ class ChatPanel extends Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log("=nextProps.outGoingDeclineStatus=======");
-    console.log(nextProps.outGoingDeclineStatus);
-    console.log("====================================");
+    console.log('===========nextProps.onlineUsers=========================');
+    console.log(nextProps.onlineUsers);
+    console.log('====================================');
+  
     if (nextProps.getAllStatus === "done") {
       this.setState({
-        contactList: this.props.allUsers
+        contactList: this.props.allUsers,
+        onLineUserArray: nextProps.onlineUsers
       });
     }
     if (nextProps.incomingCall) {
@@ -599,11 +597,11 @@ class ChatPanel extends Component {
     if (nextProps.outGoingDeclineStatus === "done") {
       this.outGoingDecline();
     }
+ 
   }
 
   audio = new Audio(sound);
 
-  
   startPlay = () => {
     this.setState({ play: true }, () => {
       this.audio.play();
@@ -613,7 +611,7 @@ class ChatPanel extends Component {
     this.setState({ play: false }, () => {
       this.audio.pause();
     });
-    this.audio.currentTime = 0
+    this.audio.currentTime = 0;
   };
 
   render() {
@@ -715,7 +713,8 @@ const mapStateToProps = state => {
     incomingRoomName: state.chatReducer.incomingRoomName,
     callingUser: state.chatReducer.callingUser,
     callDeclinestatus: state.chatReducer.callDeclinestatus,
-    outGoingDeclineStatus: state.chatReducer.outGoingDeclineStatus
+    outGoingDeclineStatus: state.chatReducer.outGoingDeclineStatus,
+    onlineUsers: state.userReducer.onlineUsers
   };
 };
 export default connect(

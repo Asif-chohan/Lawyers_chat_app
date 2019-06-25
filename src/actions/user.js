@@ -15,6 +15,7 @@ export const GET_ALL_ERR = "GET_ALL_ERR";
 export const EMAIL_IN_USE = "EMAIL_IN_USE"
 export const EMAIL_IN_USE_ERR = "EMAIL_IN_USE_ERR"
 export const EMAIL_READY_TO_USE = "EMAIL_READY_TO_USE"
+export const ONLINE_USERS = "ONLINE_USERS";
 
 
         
@@ -152,6 +153,16 @@ export const getAllUsers = () => {
         });
       }
     });
+    socket.on("onlineUsers", users => {
+      console.log('======users in actions==============================')
+      console.log(users)
+      console.log('====================================')
+      dispatch({
+        type: ONLINE_USERS,
+        payload: users
+      });
+    });
+ 
   };
 };
 

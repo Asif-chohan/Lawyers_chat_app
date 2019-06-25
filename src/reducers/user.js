@@ -11,7 +11,8 @@ import {
   GET_ALL_ERR,
   EMAIL_IN_USE,
   EMAIL_IN_USE_ERR,
-  EMAIL_READY_TO_USE
+  EMAIL_READY_TO_USE,
+  ONLINE_USERS
 } from "../actions/user";
 
 const INIT_STATE = {
@@ -25,7 +26,8 @@ const INIT_STATE = {
   allUsers: [],
   checkEmailStatus: "not done",
   new_User:{},
-  emailReadyToUse: false
+  emailReadyToUse: false,
+  onlineUsers: []
 };
 
 export default (state = INIT_STATE, action) => {
@@ -120,6 +122,15 @@ export default (state = INIT_STATE, action) => {
           loader:new Date(),
           new_User:action.data
       };
+      case ONLINE_USERS:
+        console.log('=======in reducer onlin=============================');
+        console.log(action.payload);
+        console.log('====================================');
+          return {
+            ...state,
+            onlineUsers: action.payload,
+            loader: new Date()
+          };
     default:
       return state;
   }

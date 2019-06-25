@@ -51,18 +51,19 @@ dbConnection();
 setupPassport();
 
 // socketIO Routes
-let onLineUers = [];
+let onLineUsers = [];
 io.on("connection", function(socket) {
-  console.log("a user connected");
   socket.on("setId", id => {
     console.log("setId", id);
+    socket.id = id
     socket.join(id);
-    onLineUers.push(id)
-    socket.broadcast.emit("onlineUsers",onLineUers )
+    onLineUsers.push(id)
+    io.emit("onlineUsers",onLineUsers )
+  
+    console.log("socetArr", onLineUsers);
 
-    console.log("socetArr", onLineUers);
   });
-
+  
   socket.on("getTokan", id => {
     var identity = id;
 
@@ -124,6 +125,9 @@ io.on("connection", function(socket) {
 
   socket.on("disconnect", function() {
     console.log("user disconnected");
+    var i = onLineUsers.indexOf(socket.id);
+    onLineUsers.splice(i, 1);
+
   });
 });
 

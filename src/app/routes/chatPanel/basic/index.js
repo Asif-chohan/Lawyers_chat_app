@@ -55,17 +55,17 @@ class ChatPanel extends Component {
       showOutGoingLoader: true,
       callType
     });
-    let roomName = "newAsif";
-    // let roomName = "";
-    // if (callType === "outGoing") {
-    //   roomName = this.props.user._id + user._id;
-    //   console.log("Joining room '" + roomName + "'...");
-    this.setState({
-      roomName: roomName
-    });
-    // } else {
-    //   roomName = this.state.roomName;
-    // }
+    // let roomName = "newAsif";
+    let roomName = "";
+    if (callType === "outGoing") {
+      roomName = this.props.user._id + user._id;
+      console.log("Joining room '" + roomName + "'...");
+      this.setState({
+        roomName: roomName
+      });
+    } else {
+      roomName = this.state.roomName;
+    }
 
     let connectOptions = {
       name: roomName
@@ -125,8 +125,8 @@ class ChatPanel extends Component {
         this.props.user
       );
     }
-
-    this.togglePlay();
+    this.startPlay()
+    // this.togglePlay();
 
     // Called when a participant joins a room
     console.log("Joined as '" + this.state.identity + "'");
@@ -159,6 +159,8 @@ class ChatPanel extends Component {
     // When a Participant joins the Room, log the event.
     room.on("participantConnected", participant => {
       console.log("Joining: '" + participant.identity + "'");
+      // this.togglePlay();
+      this.endPlay()
       this.setState({
         showIncomingScreen: false,
         showOutGoingScreen: false,
@@ -205,7 +207,8 @@ class ChatPanel extends Component {
   };
 
   leaveRoom = () => {
-    this.togglePlay();
+    // this.togglePlay();
+    this.endPlay()
     this.state.activeRoom.disconnect();
     this.setState({
       hasJoinedRoom: false,
@@ -217,7 +220,8 @@ class ChatPanel extends Component {
   };
   declineCall = () => {
     this.props.declineCall(this.props.callingUser);
-    this.togglePlay();
+    // this.togglePlay();
+    this.endPlay()
     this.setState({
       hasJoinedRoom: false,
       localMediaAvailable: false,
@@ -572,7 +576,8 @@ class ChatPanel extends Component {
       });
     }
     if (nextProps.incomingCall) {
-      this.togglePlay();
+      // this.togglePlay();
+      this.startPlay()
       this.setState({
         roomName: nextProps.incomingRoomName,
         showIncomingScreen: true
@@ -586,14 +591,25 @@ class ChatPanel extends Component {
   audio = new Audio(sound);
 
   // play Audio
-  togglePlay = () => {
-    this.setState({ play: !this.state.play }, () => {
-      this.state.play ? this.audio.play() : this.audio.pause();
+  // togglePlay = () => {
+  //   this.setState({ play: !this.state.play }, () => {
+  //     this.state.play ? this.audio.play() : this.audio.pause();
+  //   });
+  // };
+  startPlay = () => {
+    this.setState({ play: true }, () => {
+      this.audio.play();
+    });
+  };
+  endPlay = () => {
+    this.setState({ play: false }, () => {
+      this.audio.pause();
     });
   };
 
   render() {
     const { incomingCall, callingUser } = this.props;
+
 
     const {
       loader,
@@ -659,7 +675,6 @@ class ChatPanel extends Component {
             )}
             {showIncomingScreen && (
               <IncomingCallScreen
-                // selectedUser={selectedUser}
                 leaveRoom={this.declineCall}
                 startCall={this.startCall}
                 callingUser={callingUser}

@@ -19,7 +19,8 @@ export default (state = INIT_STATE, action) => {
         tokan: action.payload,
         getTokanStatus: "done",
         loader: new Date(),
-        callDeclinestatus: "not done"
+        callDeclinestatus: "not done",
+        outGoingDeclineStatus: "not done",
       };
     case REC_CALL:
       return {
@@ -28,7 +29,8 @@ export default (state = INIT_STATE, action) => {
         incomingRoomName: action.payload.roomName,
         callingUser: action.payload.callingUser,
         loader: new Date(),
-        callDeclinestatus: "not done"
+        callDeclinestatus: "not done",
+        outGoingDeclineStatus: "not done",
       };
     case DECLINE_KNOW:
     

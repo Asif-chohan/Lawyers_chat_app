@@ -14,6 +14,7 @@ import Fab from "@material-ui/core/Fab";
 import Call from "@material-ui/icons/Call";
 import UserIcon from "../../assets/images/user.png";
 
+import CircularProgress from "@material-ui/core/CircularProgress";
 const DialogTitle = withStyles(theme => ({
   root: {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -88,7 +89,7 @@ class CustomizedDialogDemo extends React.Component {
   };
 
   render() {
-    const { leaveRoom, startCall, callingUser } = this.props;
+    const { leaveRoom, startCall, callingUser, callAttendLoader } = this.props;
     return (
       <div>
         <Dialog
@@ -109,13 +110,17 @@ class CustomizedDialogDemo extends React.Component {
             <Avatar src={UserIcon} />
           </DialogContent>
           <DialogActions>
-            <Fab
-              style={{ color: "green", marginRight: "20px" }}
-              aria-label="Add"
-              onClick={() => startCall("attndCall")}
-            >
-              <Call />
-            </Fab>
+            {callAttendLoader ? (
+              <CircularProgress style={{color: "#fff"}} />
+            ) : (
+              <Fab
+                style={{ color: "green", marginRight: "20px" }}
+                aria-label="Add"
+                onClick={() => startCall(null, "attndCall")}
+              >
+                <Call />
+              </Fab>
+            )}
             <Fab style={{ color: "red" }} aria-label="Add" onClick={leaveRoom}>
               <Call />
             </Fab>

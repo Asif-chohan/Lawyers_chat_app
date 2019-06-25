@@ -56,6 +56,11 @@ class ChatPanel extends Component {
       showOutGoingLoader: true,
       callType
     });
+    if(callType === "attndCall"){
+      this.setState({
+        callAttendLoader: true
+      })
+    }
     // let roomName = "newAsif";
     let roomName = "";
     if (callType === "outGoing") {
@@ -126,8 +131,8 @@ class ChatPanel extends Component {
         this.props.user
       );
       this.setState({
-        showOutGoingScreen: true,
-      })
+        showOutGoingScreen: true
+      });
     }
     this.startPlay();
     // this.togglePlay();
@@ -168,7 +173,8 @@ class ChatPanel extends Component {
       this.setState({
         showIncomingScreen: false,
         showOutGoingScreen: false,
-        showCamera: true
+        showCamera: true,
+        callAttendLoader: false,
       });
     });
 
@@ -177,7 +183,9 @@ class ChatPanel extends Component {
       this.setState({
         showIncomingScreen: false,
         showOutGoingScreen: false,
-        showCamera: true
+        showCamera: true,
+        callAttendLoader: false,
+
       });
       this.endPlay();
       console.log("====================================");
@@ -216,7 +224,7 @@ class ChatPanel extends Component {
     });
   };
 
-  leaveRoom = (leaveType) => {
+  leaveRoom = leaveType => {
     // this.togglePlay();
     this.endPlay();
     this.state.activeRoom.disconnect();
@@ -227,12 +235,23 @@ class ChatPanel extends Component {
       showIncomingScreen: false,
       showCamera: false
     });
-    if(leaveType === "outGoingLeave"){
-      this.props.outGoingLeave(this.state.selectedUser)
+    if (leaveType === "outGoingLeave") {
+      this.props.outGoingLeave(this.state.selectedUser);
     }
   };
   declineCall = () => {
     this.props.declineCall(this.props.callingUser);
+    // this.togglePlay();
+    this.endPlay();
+    this.setState({
+      hasJoinedRoom: false,
+      localMediaAvailable: false,
+      showOutGoingScreen: false,
+      showIncomingScreen: false,
+      showCamera: false
+    });
+  };
+  outGoingDecline = () => {
     // this.togglePlay();
     this.endPlay();
     this.setState({
@@ -257,15 +276,7 @@ class ChatPanel extends Component {
     // const { conversationData } = conversation;
     console.log("selecteduser", selectedUser);
 
-    // let showLocalTrack = this.state.localMediaAvailable ? (
-    //   <div className="flex-item">
-    //     <div ref="remoteMedia" className="remoteVideo">
-    //       <div ref="localMedia" className="localVideo" />
-    //     </div>
-    //   </div>
-    // ) : (
-    //   ""
-    // );
+   
 
     return (
       <div className="chat-main">
@@ -304,15 +315,7 @@ class ChatPanel extends Component {
                 : "calc(100vh - 255px)"
           }}
         >
-          {/* <div className="flex-container"> */}
-          {/* {showLocalTrack} */}
-
-          {/* <div className="flex-item" ref="remoteMedia" id="remote-media" />
-          </div> */}
-          {/* <Conversation
-            conversationData={conversationData}
-            selectedUser={selectedUser}
-          /> */}
+          
         </CustomScrollbars>
 
         <div className="chat-main-footer">
@@ -320,16 +323,7 @@ class ChatPanel extends Component {
             className="d-flex flex-row align-items-center"
             style={{ maxHeight: 51 }}
           >
-            {/* <div className="col">
-              <div className="form-group">
-                <textarea
-                  id="required"
-                  className="border-0 form-control chat-textarea"
-                  value={message}
-                  placeholder="Type and hit enter to send message"
-                />
-              </div>
-            </div> */}
+           
 
             <div className="chat-sent" style={{ margin: "auto" }}>
               {showOutGoingLoader ? (
@@ -351,7 +345,6 @@ class ChatPanel extends Component {
   };
 
   ChatUsers = () => {
-    // const {name, email}=this.props.user;
     var name = this.props.user.name;
     var email = this.props.user.email;
     return (
@@ -552,7 +545,8 @@ class ChatPanel extends Component {
       showOutGoingLoader: false,
       callType: "",
       showIncomingScreen: false,
-      showCamera: false
+      showCamera: false,
+      callAttendLoader: false
     };
   }
   handleChange = (event, value) => {
@@ -583,9 +577,9 @@ class ChatPanel extends Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log('=nextProps.outGoingDeclineStatus=======');
+    console.log("=nextProps.outGoingDeclineStatus=======");
     console.log(nextProps.outGoingDeclineStatus);
-    console.log('====================================');
+    console.log("====================================");
     if (nextProps.getAllStatus === "done") {
       this.setState({
         contactList: this.props.allUsers
@@ -603,18 +597,13 @@ class ChatPanel extends Component {
       this.leaveRoom();
     }
     if (nextProps.outGoingDeclineStatus === "done") {
-      this.leaveRoom();
+      this.outGoingDecline();
     }
   }
 
   audio = new Audio(sound);
 
-  // play Audio
-  // togglePlay = () => {
-  //   this.setState({ play: !this.state.play }, () => {
-  //     this.state.play ? this.audio.play() : this.audio.pause();
-  //   });
-  // };
+  
   startPlay = () => {
     this.setState({ play: true }, () => {
       this.audio.play();
@@ -624,6 +613,7 @@ class ChatPanel extends Component {
     this.setState({ play: false }, () => {
       this.audio.pause();
     });
+    this.audio.currentTime = 0
   };
 
   render() {
@@ -638,7 +628,8 @@ class ChatPanel extends Component {
       selectedUser,
       showOutGoingLoader,
       showIncomingScreen,
-      showCamera
+      showCamera,
+      callAttendLoader
     } = this.state;
 
     console.log("showCamera", showCamera);
@@ -698,6 +689,7 @@ class ChatPanel extends Component {
                 leaveRoom={this.declineCall}
                 startCall={this.startCall}
                 callingUser={callingUser}
+                callAttendLoader={callAttendLoader}
               />
             )}
           </div>
@@ -723,7 +715,7 @@ const mapStateToProps = state => {
     incomingRoomName: state.chatReducer.incomingRoomName,
     callingUser: state.chatReducer.callingUser,
     callDeclinestatus: state.chatReducer.callDeclinestatus,
-    outGoingDeclineStatus: state.chatReducer.outGoingDeclineStatus,
+    outGoingDeclineStatus: state.chatReducer.outGoingDeclineStatus
   };
 };
 export default connect(

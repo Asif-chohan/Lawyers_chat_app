@@ -22,7 +22,8 @@ import { getAllUsers } from "../../../../actions/user";
 import {
   sendCall,
   receCall,
-  declineCall
+  declineCall,
+  outGoingLeave
 } from "../../../../actions/chatAction";
 import Video from "twilio-video";
 import placeholderImage from "../../../../assets/images/placeholder.jpg";
@@ -215,7 +216,7 @@ class ChatPanel extends Component {
     });
   };
 
-  leaveRoom = () => {
+  leaveRoom = (leaveType) => {
     // this.togglePlay();
     this.endPlay();
     this.state.activeRoom.disconnect();
@@ -226,6 +227,9 @@ class ChatPanel extends Component {
       showIncomingScreen: false,
       showCamera: false
     });
+    if(outGoingLeave === "outGoingLeave"){
+      this.props.outGoingLeave(this.state.selectedUser)
+    }
   };
   declineCall = () => {
     this.props.declineCall(this.props.callingUser);
@@ -579,6 +583,9 @@ class ChatPanel extends Component {
     }
   }
   componentWillReceiveProps(nextProps) {
+    console.log('=============nextProps.outGoingDeclineStatus=============');
+    console.log(nextProps.outGoingDeclineStatus);
+    console.log('====================================');
     if (nextProps.getAllStatus === "done") {
       this.setState({
         contactList: this.props.allUsers
@@ -593,6 +600,9 @@ class ChatPanel extends Component {
       });
     }
     if (nextProps.callDeclinestatus === "done") {
+      this.leaveRoom();
+    }
+    if (nextProps.outGoingDeclineStatus === "done") {
       this.leaveRoom();
     }
   }
@@ -712,10 +722,11 @@ const mapStateToProps = state => {
     incomingCall: state.chatReducer.incomingCall,
     incomingRoomName: state.chatReducer.incomingRoomName,
     callingUser: state.chatReducer.callingUser,
-    callDeclinestatus: state.chatReducer.callDeclinestatus
+    callDeclinestatus: state.chatReducer.callDeclinestatus,
+    outGoingDeclineStatus: state.chatReducer.outGoingDeclineStatus,
   };
 };
 export default connect(
   mapStateToProps,
-  { getAllUsers, sendCall, receCall, declineCall }
+  { getAllUsers, sendCall, receCall, declineCall, outGoingLeave }
 )(ChatPanel);

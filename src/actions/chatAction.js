@@ -6,6 +6,7 @@ export const SEND_CALL_ERR = "SEND_CALL_ERR";
 export const REC_CALL = "REC_CALL";
 export const REC_CALL_ERR = "REC_CALL_ERR";
 export const DECLINE_KNOW = "DECLINE_KNOW";
+export const OUTGOING_DECLINE = "OUTGOING_DECLINE";
 
 export const getTokan = id => {
   return dispatch => {
@@ -36,6 +37,13 @@ export const sendCall = (user, room, callingUser) => {
         payload: data
       });
     });
+    socket.on("outGoingDecline", data => {
+      dispatch({
+        type: OUTGOING_DECLINE,
+        payload: data
+      });
+    });
+
   };
 };
 export const declineCall = callingUser => {
@@ -44,6 +52,14 @@ export const declineCall = callingUser => {
   };
   return dispatch => {
     socket.emit("declineCall", data);
+  };
+};
+export const outGoingLeave = selectedUser => {
+  let data = {
+    selectedUser: selectedUser
+  };
+  return dispatch => {
+    socket.emit("outGoingLeave", data);
   };
 };
 

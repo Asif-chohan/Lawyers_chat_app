@@ -89,6 +89,9 @@ io.on("connection", function(socket) {
   socket.on("declineCall",(data)=>{
     io.sockets.in(data.callingUser._id).emit("declineKnow", "declined");
   })
+  socket.on("outGoingLeave",(data)=>{
+    io.sockets.in(data.selectedUser._id).emit("outGoingDecline", "declined");
+  })
 
   socket.on("getAll", () => {
     userSchema

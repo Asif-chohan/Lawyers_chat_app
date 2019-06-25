@@ -99,10 +99,10 @@ class CustomizedDialogDemo extends React.Component {
         >
           <DialogTitle id="customized-dialog-title">
             <Typography style={{ color: "white", fontSize: "1.4em" }}>
-              {/* {callingUser.name} */}
+              {callingUser.name}
             </Typography>
             <Typography style={{ color: "#a5d6a7" }} color="secondary">
-              calling (incoming)
+              calling
             </Typography>
           </DialogTitle>
           <DialogContent style={{ display: "flex", alignItems: "center" }}>

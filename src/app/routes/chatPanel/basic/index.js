@@ -125,7 +125,7 @@ class ChatPanel extends Component {
         this.props.user
       );
     }
-    this.startPlay()
+    this.startPlay();
     // this.togglePlay();
 
     // Called when a participant joins a room
@@ -135,19 +135,20 @@ class ChatPanel extends Component {
       localMediaAvailable: true,
       hasJoinedRoom: true,
       showOutGoingScreen: true,
-      showOutGoingLoader: false
+      showOutGoingLoader: false,
+      showIncomingScreen: false
     });
 
     // Attach LocalParticipant's Tracks, if not already attached.
-    if (!this.state.showOutGoingScreen) {
-      var previewContainer = this.refs.localMedia;
-      console.log("=======previewContainer=============================");
-      console.log(previewContainer);
-      console.log("====================================");
-      if (!previewContainer.querySelector("video")) {
-        this.attachParticipantTracks(room.localParticipant, previewContainer);
-      }
+    // if (!this.state.showOutGoingScreen) {
+    var previewContainer = this.refs.localMedia;
+    console.log("=======previewContainer=============================");
+    console.log(previewContainer);
+    console.log("====================================");
+    if (!previewContainer.querySelector("video")) {
+      this.attachParticipantTracks(room.localParticipant, previewContainer);
     }
+    // }
 
     // Attach the Tracks of the Room's Participants.
     room.participants.forEach(participant => {
@@ -160,7 +161,7 @@ class ChatPanel extends Component {
     room.on("participantConnected", participant => {
       console.log("Joining: '" + participant.identity + "'");
       // this.togglePlay();
-      this.endPlay()
+      this.endPlay();
       this.setState({
         showIncomingScreen: false,
         showOutGoingScreen: false,
@@ -208,7 +209,7 @@ class ChatPanel extends Component {
 
   leaveRoom = () => {
     // this.togglePlay();
-    this.endPlay()
+    this.endPlay();
     this.state.activeRoom.disconnect();
     this.setState({
       hasJoinedRoom: false,
@@ -221,7 +222,7 @@ class ChatPanel extends Component {
   declineCall = () => {
     this.props.declineCall(this.props.callingUser);
     // this.togglePlay();
-    this.endPlay()
+    this.endPlay();
     this.setState({
       hasJoinedRoom: false,
       localMediaAvailable: false,
@@ -577,7 +578,7 @@ class ChatPanel extends Component {
     }
     if (nextProps.incomingCall) {
       // this.togglePlay();
-      this.startPlay()
+      this.startPlay();
       this.setState({
         roomName: nextProps.incomingRoomName,
         showIncomingScreen: true
@@ -610,7 +611,6 @@ class ChatPanel extends Component {
   render() {
     const { incomingCall, callingUser } = this.props;
 
-
     const {
       loader,
       userState,
@@ -626,9 +626,10 @@ class ChatPanel extends Component {
     return (
       <div className="app-wrapper app-wrapper-module">
         {/* {showCamera ? ( */}
-          <div className="flex-item">
-            <div ref="remoteMedia" className="remoteVideo">
-              <div ref="localMedia" className="localVideo" />
+        <div className="flex-item">
+          <div ref="remoteMedia" className="remoteVideo">
+            <div ref="localMedia" className="localVideo" />
+            {showCamera && (
               <Fab
                 color="secondary"
                 aria-label="Add"
@@ -637,58 +638,51 @@ class ChatPanel extends Component {
               >
                 <CallEnd />
               </Fab>
-            </div>
+            )}
           </div>
+        </div>
         {/* ) : ( */}
-          <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
-            <div className="chat-module-box">
-              <div className="d-block d-xl-none">
-                {/* {showLocalTrack} */}
+        <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
+          <div className="chat-module-box">
+            <div className="d-block d-xl-none">
+              {/* {showLocalTrack} */}
 
-                <Drawer
-                  open={drawerState}
-                  onClose={this.onToggleDrawer.bind(this)}
-                >
-                  {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
-                </Drawer>
-              </div>
-
-              <div className="chat-sidenav d-none d-xl-flex">
+              <Drawer
+                open={drawerState}
+                onClose={this.onToggleDrawer.bind(this)}
+              >
                 {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
-              </div>
-              {loader ? (
-                <div
-                  className="loader-view w-100"
-                  style={{ height: "calc(100vh - 120px)" }}
-                >
-                  <CircularProgress />
-                </div>
-              ) : (
-                this.showCommunication()
-              )}
+              </Drawer>
             </div>
-            {showOutGoingScreen && (
-              <OutGoingCall
-                selectedUser={selectedUser}
-                leaveRoom={this.leaveRoom}
-              />
-            )}
-            {showIncomingScreen && (
-              <IncomingCallScreen
-                leaveRoom={this.declineCall}
-                startCall={this.startCall}
-                callingUser={callingUser}
-              />
-            )}
-            {/* <Dialog
-            fullScreen
-            open={false}
-            onClose={this.handleClose}
-            TransitionComponent={Transition}
-          > */}
 
-            {/* </Dialog> */}
+            <div className="chat-sidenav d-none d-xl-flex">
+              {userState === 1 ? this.ChatUsers() : this.AppUsersInfo()}
+            </div>
+            {loader ? (
+              <div
+                className="loader-view w-100"
+                style={{ height: "calc(100vh - 120px)" }}
+              >
+                <CircularProgress />
+              </div>
+            ) : (
+              this.showCommunication()
+            )}
           </div>
+          {showOutGoingScreen && (
+            <OutGoingCall
+              selectedUser={selectedUser}
+              leaveRoom={this.leaveRoom}
+            />
+          )}
+          {showIncomingScreen && (
+            <IncomingCallScreen
+              leaveRoom={this.declineCall}
+              startCall={this.startCall}
+              callingUser={callingUser}
+            />
+          )}
+        </div>
         {/* )} */}
       </div>
     );

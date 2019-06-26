@@ -3,7 +3,5 @@ WORKDIR /todo/src/app
 COPY package*.json ./
 COPY . .
 RUN npm install
-RUN npm uninstall bcrypt
-RUN npm install bcrypt
 EXPOSE 5000
 CMD [ "npm", "start" ]

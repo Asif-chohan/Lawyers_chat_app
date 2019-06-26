@@ -1,3 +1,3 @@
-// let url = "https://salty-garden-52509.herokuapp.com/";
-let url = "/";
+let url = "https://salty-garden-52509.herokuapp.com/";
+// let url = "/";
 export default url;

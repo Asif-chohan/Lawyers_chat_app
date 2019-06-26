@@ -17,7 +17,6 @@ function passportSetup() {
         if (!user) {
           return done(null, false, { message: "user not registered yet!" });
         }
-        console.log("ps", password);
 
         bcrypt.compare(password, user.password, function(err, res) {
           if (err) {
@@ -37,7 +36,6 @@ function passportSetup() {
   );
 
   passport.serializeUser(function(user, done) {
-    console.log("sere", user);
 
     done(null, user._id);
   });

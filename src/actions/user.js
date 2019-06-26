@@ -27,9 +27,7 @@ const config = {
 }
 
 export const singUp = data => {
-  console.log("======in action==============================");
-  console.log(data);
-  console.log("====================================");
+ 
   return disptach => {
     axios
       .post(url + "user/signup", data)
@@ -53,7 +51,6 @@ export const singUp = data => {
         }
       })
       .catch(err => {
-        console.log("err", err);
         disptach({
           type: SIGN_UP_ERR
         });
@@ -63,14 +60,11 @@ export const singUp = data => {
 };
 
 export const signIn = data => {
-  console.log("======in action==============================");
-  console.log(data);
-  console.log("====================================");
+
   return disptach => {
     axios
       .post(url + "user/login", data)
       .then(res => {
-        console.log("res", res);
         socket.emit("setId", res.data._id);
         disptach({
           type: SIGN_IN,
@@ -80,7 +74,6 @@ export const signIn = data => {
         toastr.success("Successfully Sign in!");
       })
       .catch(err => {
-        console.log("err", err.status);
         disptach({
           type: SIGN_UP_ERR
         });
@@ -93,7 +86,6 @@ export const getUser = () => {
     axios
       .get(url + "user/authenticate")
       .then(res => {
-        console.log("res", res);
         socket.emit("setId", res.data._id);
 
         disptach({
@@ -102,7 +94,6 @@ export const getUser = () => {
         });
       })
       .catch(err => {
-        console.log("err", err.status);
         disptach({
           type: GET_USER_ERR
         });
@@ -114,7 +105,6 @@ export const logOut = () => {
     axios
       .post(url + "user/logout")
       .then(res => {
-        console.log("res", res);
         if (res.data === "succefully logout!") {
           toastr.success("Successfully logout");
 
@@ -129,7 +119,6 @@ export const logOut = () => {
         }
       })
       .catch(err => {
-        console.log("err", err.status);
         disptach({
           type: LOG_OUT_ERR
         });
@@ -154,9 +143,7 @@ export const getAllUsers = () => {
       }
     });
     socket.on("onlineUsers", users => {
-      console.log('======users in actions==============================')
-      console.log(users)
-      console.log('====================================')
+
       dispatch({
         type: ONLINE_USERS,
         payload: users
@@ -170,7 +157,6 @@ export const verifyEmailFromServer = (data) => {
   return dispatch => {
     axios.post(url + "user/emailVerification", data)
       .then(res => {
-        console.log("res", res);
         if (res.data === "readytouse") {
           dispatch({
             type: EMAIL_READY_TO_USE,
@@ -189,7 +175,6 @@ export const verifyEmailFromServer = (data) => {
         }
       })
       .catch(err => {
-        console.log("err", err)
         toastr.error("Error occured! Try again later")
         dispatch({
           type: EMAIL_IN_USE_ERR

@@ -63,7 +63,6 @@ export const outGoingLeave = selectedUser => {
 export const receCall = () => {
   return dispatch => {
     socket.on("recCall", data => {
-      console.log(data);
       dispatch({
         type: REC_CALL,
         payload: data

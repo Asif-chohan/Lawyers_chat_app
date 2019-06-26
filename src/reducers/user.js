@@ -88,7 +88,6 @@ export default (state = INIT_STATE, action) => {
       };
     case GET_ALL:
       let users = action.payload.filter(item => item._id !== state.user._id);
-      console.log("user all", users);
       return {
         ...state,
         getAllStatus: "done",
@@ -123,9 +122,7 @@ export default (state = INIT_STATE, action) => {
           new_User:action.data
       };
       case ONLINE_USERS:
-        console.log('=======in reducer onlin=============================');
-        console.log(action.payload);
-        console.log('====================================');
+      
           return {
             ...state,
             onlineUsers: action.payload,

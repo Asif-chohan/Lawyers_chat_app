@@ -28,7 +28,7 @@ import {
 import Video from "twilio-video";
 import placeholderImage from "../../../../assets/images/placeholder.jpg";
 import Typography from "@material-ui/core/Typography";
-
+import SweetAlert from "react-bootstrap-sweetalert";
 import sound from "../../../../assets/sound.mp3";
 // dialog imports
 import Dialog from "@material-ui/core/Dialog";
@@ -46,7 +46,6 @@ function Transition(props) {
 class ChatPanel extends Component {
   // call functions.....................................
   startCall = (user, callType) => {
-    console.log("callType", callType);
     if (!this.state.roomName.trim()) {
       this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
@@ -65,7 +64,6 @@ class ChatPanel extends Component {
     let roomName = "";
     if (callType === "outGoing") {
       roomName = this.props.user._id + user._id;
-      console.log("Joining room '" + roomName + "'...");
       this.setState({
         roomName: roomName
       });
@@ -93,20 +91,15 @@ class ChatPanel extends Component {
   };
 
   attachTracks(tracks, container) {
-    console.log("================tracks====================", tracks);
     tracks.forEach(track => {
-      console.log("===================container=================", container);
       container.appendChild(track.attach());
     });
   }
 
   // Attaches a track to a specified DOM container
   attachParticipantTracks(participant, container) {
-    console.log("==========attachParticipantTracks===========", container);
-    console.log("gum log", participant);
     var tracks = Array.from(participant.tracks.values());
 
-    console.log("===============attachParticipantTracks============", tracks);
     this.attachTracks(tracks, container);
   }
 
@@ -125,6 +118,7 @@ class ChatPanel extends Component {
 
   roomJoined = room => {
     if (this.state.callType === "outGoing") {
+      this.setTimer();
       this.props.sendCall(
         this.state.selectedUser,
         this.state.roomName,
@@ -138,7 +132,6 @@ class ChatPanel extends Component {
     // this.togglePlay();
 
     // Called when a participant joins a room
-    console.log("Joined as '" + this.state.identity + "'");
     this.setState({
       activeRoom: room,
       localMediaAvailable: true,
@@ -150,9 +143,7 @@ class ChatPanel extends Component {
     // Attach LocalParticipant's Tracks, if not already attached.
     // if (!this.state.showOutGoingScreen) {
     var previewContainer = this.refs.localMedia;
-    console.log("=======previewContainer=============================");
-    console.log(previewContainer);
-    console.log("====================================");
+
     if (!previewContainer.querySelector("video")) {
       this.attachParticipantTracks(room.localParticipant, previewContainer);
     }
@@ -160,14 +151,12 @@ class ChatPanel extends Component {
 
     // Attach the Tracks of the Room's Participants.
     room.participants.forEach(participant => {
-      console.log("Already in Room: '" + participant.identity + "'");
       var previewContainer = this.refs.remoteMedia;
       this.attachParticipantTracks(participant, previewContainer);
     });
 
     // When a Participant joins the Room, log the event.
     room.on("participantConnected", participant => {
-      console.log("Joining: '" + participant.identity + "'");
       // this.togglePlay();
       this.endPlay();
       this.setState({
@@ -187,9 +176,7 @@ class ChatPanel extends Component {
         callAttendLoader: false
       });
       this.endPlay();
-      console.log("====================================");
-      console.log("difffffffff");
-      console.log("====================================");
+
       console.log(participant.identity + " added track: " + track.kind);
       var previewContainer = this.refs.remoteMedia;
       this.attachTracks([track], previewContainer);
@@ -251,7 +238,6 @@ class ChatPanel extends Component {
     });
   };
   outGoingDecline = () => {
-    // this.togglePlay();
     this.endPlay();
     this.setState({
       hasJoinedRoom: false,
@@ -260,6 +246,21 @@ class ChatPanel extends Component {
       showIncomingScreen: false,
       showCamera: false
     });
+  };
+  setTimer = () => {
+    let interval = setInterval(() => {
+      if (this.state.timer >= 50) {
+        clearInterval(interval);
+        this.leaveRoom("outGoingLeave");
+        this.setState({
+          showTimerAlert: true
+        });
+      }
+      this.setState({
+        timer: this.state.timer + 1
+      });
+      console.log(this.state.timer);
+    }, 1000);
   };
 
   // end of call code......................................................
@@ -273,7 +274,6 @@ class ChatPanel extends Component {
       showOutGoingLoader
     } = this.state;
     // const { conversationData } = conversation;
-    console.log("selecteduser", selectedUser);
 
     return (
       <div className="chat-main">
@@ -340,7 +340,8 @@ class ChatPanel extends Component {
   ChatUsers = () => {
     var name = this.props.user.name;
     var email = this.props.user.email;
-    const { onLineUserArray } = this.state;
+    const { onlineUsers } = this.props;
+
     return (
       <div className="chat-sidenav-main">
         <div className="chat-sidenav-header">
@@ -379,7 +380,6 @@ class ChatPanel extends Component {
               placeholder="Search to start new chat"
               value={this.state.searchChatUser}
               onChange={e => {
-                console.log(e.target.value);
                 this.setState({
                   searchChatUser: e.target.value
                 });
@@ -458,7 +458,7 @@ class ChatPanel extends Component {
                 })}
                 selectedSectionId={this.state.selectedSectionId}
                 onSelectUser={this.onSelectUser.bind(this)}
-                onlineUsers={onLineUserArray}
+                onlineUsers={onlineUsers}
               />
             )}
           </CustomScrollbars>
@@ -542,7 +542,9 @@ class ChatPanel extends Component {
       showIncomingScreen: false,
       showCamera: false,
       callAttendLoader: false,
-      onLineUserArray:[]
+      onLineUserArray: [],
+      timer: 0,
+      showTimerAlert: false
     };
   }
   handleChange = (event, value) => {
@@ -573,14 +575,13 @@ class ChatPanel extends Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log('===========nextProps.onlineUsers=========================');
-    console.log(nextProps.onlineUsers);
-    console.log('====================================');
-  
+    this.setState({
+      onLineUserArray: nextProps.onlineUsers
+    });
+
     if (nextProps.getAllStatus === "done") {
       this.setState({
-        contactList: this.props.allUsers,
-        onLineUserArray: nextProps.onlineUsers
+        contactList: this.props.allUsers
       });
     }
     if (nextProps.incomingCall) {
@@ -597,7 +598,6 @@ class ChatPanel extends Component {
     if (nextProps.outGoingDeclineStatus === "done") {
       this.outGoingDecline();
     }
- 
   }
 
   audio = new Audio(sound);
@@ -613,6 +613,11 @@ class ChatPanel extends Component {
     });
     this.audio.currentTime = 0;
   };
+  handleTimerAlert = () => {
+    this.setState({
+      showTimerAlert: false
+    });
+  };
 
   render() {
     const { incomingCall, callingUser } = this.props;
@@ -627,10 +632,10 @@ class ChatPanel extends Component {
       showOutGoingLoader,
       showIncomingScreen,
       showCamera,
-      callAttendLoader
+      callAttendLoader,
+      showTimerAlert
     } = this.state;
 
-    console.log("showCamera", showCamera);
     return (
       <div className="app-wrapper app-wrapper-module">
         {/* {showCamera ? ( */}
@@ -693,7 +698,16 @@ class ChatPanel extends Component {
           </div>
         )}
 
-        {/* )} */}
+        {showTimerAlert && (
+          <SweetAlert
+            style={{ marginTop: "0px" }}
+            show={showTimerAlert}
+            title={this.state.selectedUser.name + " is not available"}
+            onConfirm={this.handleTimerAlert}
+          >
+            Call him later!
+          </SweetAlert>
+        )}
       </div>
     );
   }

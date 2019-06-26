@@ -1,15 +1,13 @@
 import React from "react";
 import userImg from "../../../../assets/images/user.png";
 const UserCell = ({ onSelectUser, selectedSectionId, user, onlineUsers }) => {
-  console.log("online Array", onlineUsers);
-  let getUser = onlineUsers.filter(item => item === user._id);
+  let getUser = onlineUsers.filter(item => item.uid === user._id);
   let status = "";
   if (getUser.length > 0) {
     status = true;
   } else {
     status = false;
   }
-  console.log("status", status);
   return (
     <div
       className={`chat-user-item ${

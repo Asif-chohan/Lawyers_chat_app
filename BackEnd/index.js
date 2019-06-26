@@ -8,9 +8,7 @@ const cookieparser = require("cookie-parser");
 const passport = require("passport");
 var userSchema = require("./models/usersSchema");
 //import from custom files
-var wholeObj = require("./someFile");
 var userRoute = require("./routes/user");
-var todosRoutes = require("./routes/todos");
 var dbConnection = require("./config/dbConnection");
 var setupPassport = require("./config/passportConfig");
 var AccessToken = require("twilio").jwt.AccessToken;
@@ -55,15 +53,17 @@ let onLineUsers = [];
 io.on("connection", function(socket) {
   socket.on("setId", id => {
     console.log("setId", id);
-    socket.id = id
     socket.join(id);
-    onLineUsers.push(id)
-    io.emit("onlineUsers",onLineUsers )
-  
-    console.log("socetArr", onLineUsers);
+    let obj = {
+      uid: id,
+      socketId: socket.id
+    };
+    onLineUsers.push(obj);
+    io.emit("onlineUsers", onLineUsers);
 
+    console.log("socetArr", onLineUsers);
   });
-  
+
   socket.on("getTokan", id => {
     var identity = id;
 
@@ -89,12 +89,12 @@ io.on("connection", function(socket) {
     });
   });
 
-  socket.on("declineCall",(data)=>{
+  socket.on("declineCall", data => {
     io.sockets.in(data.callingUser._id).emit("declineKnow", "declined");
-  })
-  socket.on("outGoingLeave",(data)=>{
+  });
+  socket.on("outGoingLeave", data => {
     io.sockets.in(data.selectedUser._id).emit("outGoingDecline", "declined");
-  })
+  });
 
   socket.on("getAll", () => {
     userSchema
@@ -104,7 +104,7 @@ io.on("connection", function(socket) {
         res.forEach(item => {
           let name = item.name;
           let _id = item._id;
-          let email = item.email
+          let email = item.email;
           let obj = { _id, name, email };
           userArray.push(obj);
         });
@@ -119,15 +119,16 @@ io.on("connection", function(socket) {
     let dataToSend = {
       roomName: data.roomName,
       callingUser: data.callingUser
-    }
+    };
     io.sockets.in(data.user._id).emit("recCall", dataToSend);
   });
 
   socket.on("disconnect", function() {
-    console.log("user disconnected");
-    var i = onLineUsers.indexOf(socket.id);
-    onLineUsers.splice(i, 1);
+    // var i = onLineUsers.indexOf(socket.id);
+    // onLineUsers.splice(i, 1);
+    onLineUsers = onLineUsers.filter(item => item.socketId !== socket.id);
 
+    io.emit("onlineUsers", onLineUsers);
   });
 });
 

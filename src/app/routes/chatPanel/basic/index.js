@@ -50,6 +50,13 @@ class ChatPanel extends Component {
       this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
     }
+    let startConversation = {
+      startTime: new Date(),
+      callingUser: this.props.user,
+      outGoingUser: user,
+      type: "sent"
+    }
+    
 
     this.setState({
       showOutGoingLoader: true,
@@ -249,7 +256,7 @@ class ChatPanel extends Component {
   };
   setTimer = () => {
     let interval = setInterval(() => {
-      if (this.state.timer >= 50) {
+      if (this.state.timer >= 50 && !this.state.showCamera) {
         clearInterval(interval);
         this.leaveRoom("outGoingLeave");
         this.setState({
@@ -273,7 +280,7 @@ class ChatPanel extends Component {
       conversation,
       showOutGoingLoader
     } = this.state;
-    // const { conversationData } = conversation;
+    const { conversationData } = conversation;
 
     return (
       <div className="chat-main">
@@ -311,7 +318,12 @@ class ChatPanel extends Component {
                 ? "calc(100vh - 300px)"
                 : "calc(100vh - 255px)"
           }}
-        ></CustomScrollbars>
+        >
+          <Conversation
+            conversationData={conversationData}
+            selectedUser={selectedUser}
+          />
+        </CustomScrollbars>
 
         <div className="chat-main-footer">
           <div

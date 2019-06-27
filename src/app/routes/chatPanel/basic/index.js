@@ -55,11 +55,11 @@ class ChatPanel extends Component {
       callingUser: this.props.user,
       outGoingUser: user,
       type: "sent"
-    }
-    
+    };
 
     this.setState({
       showOutGoingLoader: true,
+      showTimerAlert: false,
       callType
     });
     if (callType === "attndCall") {
@@ -260,9 +260,16 @@ class ChatPanel extends Component {
         clearInterval(interval);
         this.leaveRoom("outGoingLeave");
         this.setState({
-          showTimerAlert: true
+          showTimerAlert: true,
+          timer: 0
         });
-      }
+      } else if (this.state.showCamera || this.state.timer >= 50) {
+        clearInterval(interval);
+        this.setState({
+          timer: 0
+
+        })
+      } 
       this.setState({
         timer: this.state.timer + 1
       });

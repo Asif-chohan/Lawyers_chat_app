@@ -7,6 +7,7 @@ var session = require("express-session");
 const cookieparser = require("cookie-parser");
 const passport = require("passport");
 var userSchema = require("./models/usersSchema");
+var conversationModal = require("./models/conversationSchema");
 //import from custom files
 var userRoute = require("./routes/user");
 var dbConnection = require("./config/dbConnection");
@@ -61,7 +62,6 @@ io.on("connection", function(socket) {
     onLineUsers.push(obj);
     io.emit("onlineUsers", onLineUsers);
 
-    console.log("socetArr", onLineUsers);
   });
 
   socket.on("getTokan", id => {
@@ -123,9 +123,42 @@ io.on("connection", function(socket) {
     io.sockets.in(data.user._id).emit("recCall", dataToSend);
   });
 
+  // for save conversation
+  socket.on("saveConversation", data => {
+    let newConversation = new conversationModal(data);
+    newConversation.save((err, conver) => {
+      if (err) {
+        io.sockets
+          .in(data.callingUser._id)
+          .emit("saveConver", "error has been occored!");
+      } else {
+        io.sockets
+          .in(data.callingUser._id)
+          .emit("saveConver", "successfullySaved");
+      }
+    });
+  });
+
+  // for get conversation
+  socket.on("getConversation", users => {
+    console.log('==========users==========================')
+    console.log(users)
+    console.log('====================================')
+    conversationModal
+      .find({ callingUser: users.user, outGoingUser: users.selectedUser })
+      .then(data => {
+        console.log("conver Data", data)
+        io.sockets.in(users.user).emit("getConver", data);
+      })
+      .catch(err => {
+        io.sockets
+          .in(users.user)
+          .emit("getConver", "error has been occored!");
+      });
+  });
+
   socket.on("disconnect", function() {
-    // var i = onLineUsers.indexOf(socket.id);
-    // onLineUsers.splice(i, 1);
+  
     onLineUsers = onLineUsers.filter(item => item.socketId !== socket.id);
 
     io.emit("onlineUsers", onLineUsers);

@@ -23,7 +23,9 @@ import {
   sendCall,
   receCall,
   declineCall,
-  outGoingLeave
+  outGoingLeave,
+  saveCon,
+  getConversation
 } from "../../../../actions/chatAction";
 import Video from "twilio-video";
 import placeholderImage from "../../../../assets/images/placeholder.jpg";
@@ -39,10 +41,6 @@ import OutGoingCall from "../../../../components/Call/outgoingCall";
 import Call from "@material-ui/icons/Call";
 import IncomingCallScreen from "../../../../components/Call/incomingCall";
 
-function Transition(props) {
-  return <Slide direction="up" {...props} />;
-}
-
 class ChatPanel extends Component {
   // call functions.....................................
   startCall = (user, callType) => {
@@ -50,12 +48,6 @@ class ChatPanel extends Component {
       this.setState({ roomNameErr: true, showOutGoingLoader: false });
       return;
     }
-    let startConversation = {
-      startTime: new Date(),
-      callingUser: this.props.user,
-      outGoingUser: user,
-      type: "sent"
-    };
 
     this.setState({
       showOutGoingLoader: true,
@@ -164,12 +156,12 @@ class ChatPanel extends Component {
 
     // When a Participant joins the Room, log the event.
     room.on("participantConnected", participant => {
-      // this.togglePlay();
       this.endPlay();
       this.setState({
         showIncomingScreen: false,
         showOutGoingScreen: false,
         showCamera: true,
+        startTime: new Date(),
         callAttendLoader: false
       });
     });
@@ -228,6 +220,21 @@ class ChatPanel extends Component {
       showIncomingScreen: false,
       showCamera: false
     });
+    let startTime = this.state.startTime;
+    let endTime = new Date();
+    let Diff = endTime - startTime;
+    let saveConversation = {
+      startTime: this.state.startTime,
+      callTime: Diff,
+      callingUser: this.props.user._id,
+      callingUserName: this.props.user._id,
+      outGoingUser: this.state.selectedUser.name,
+      outGoingUserName: this.state.selectedUser.name,
+      msg: "Call"
+    };
+    console.log("saveConversation", saveConversation);
+    this.props.saveCon(saveConversation);
+
     if (leaveType === "outGoingLeave") {
       this.props.outGoingLeave(this.state.selectedUser);
     }
@@ -267,9 +274,8 @@ class ChatPanel extends Component {
         clearInterval(interval);
         this.setState({
           timer: 0
-
-        })
-      } 
+        });
+      }
       this.setState({
         timer: this.state.timer + 1
       });
@@ -287,7 +293,17 @@ class ChatPanel extends Component {
       conversation,
       showOutGoingLoader
     } = this.state;
-    const { conversationData } = conversation;
+    conversation.forEach(item => {
+      if (item.callingUser === this.props.user._id) {
+        item.type = "sent";
+      } else {
+        item.type = "receive";
+      }
+    });
+    console.log("===========conversation data=========================");
+    console.log(conversation);
+    console.log("====================================");
+    // const { conversationData } = conversation;
 
     return (
       <div className="chat-main">
@@ -327,7 +343,7 @@ class ChatPanel extends Component {
           }}
         >
           <Conversation
-            conversationData={conversationData}
+            conversationData={conversation}
             selectedUser={selectedUser}
           />
         </CustomScrollbars>
@@ -492,14 +508,15 @@ class ChatPanel extends Component {
       loader: true,
       selectedSectionId: user._id,
       drawerState: this.props.drawerState,
-      selectedUser: user,
-      conversation: this.state.conversationList.find(
-        data => data.id === user._id
-      )
+      selectedUser: user
+      // conversation: this.state.conversationList.find(
+      //   data => data.id === user._id
+      // )
     });
-    setTimeout(() => {
-      this.setState({ loader: false });
-    }, 1500);
+    this.props.getConversation(user, this.props.user);
+    // setTimeout(() => {
+    //   this.setState({ loader: false });
+    // }, 1500);
   };
   showCommunication = () => {
     return (
@@ -563,7 +580,8 @@ class ChatPanel extends Component {
       callAttendLoader: false,
       onLineUserArray: [],
       timer: 0,
-      showTimerAlert: false
+      showTimerAlert: false,
+      startTime: ""
     };
   }
   handleChange = (event, value) => {
@@ -616,6 +634,17 @@ class ChatPanel extends Component {
     }
     if (nextProps.outGoingDeclineStatus === "done") {
       this.outGoingDecline();
+    }
+    if (nextProps.getConversationStatus === "done") {
+      this.setState({
+        loader: false,
+        conversation: nextProps.conversation
+      });
+    }
+    if (nextProps.getConversationStatus === "error") {
+      this.setState({
+        loader: false
+      });
     }
   }
 
@@ -747,10 +776,20 @@ const mapStateToProps = state => {
     callingUser: state.chatReducer.callingUser,
     callDeclinestatus: state.chatReducer.callDeclinestatus,
     outGoingDeclineStatus: state.chatReducer.outGoingDeclineStatus,
+    getConversationStatus: state.chatReducer.getConversationStatus,
+    conversation: state.chatReducer.conversation,
     onlineUsers: state.userReducer.onlineUsers
   };
 };
 export default connect(
   mapStateToProps,
-  { getAllUsers, sendCall, receCall, declineCall, outGoingLeave }
+  {
+    getAllUsers,
+    sendCall,
+    receCall,
+    declineCall,
+    outGoingLeave,
+    saveCon,
+    getConversation
+  }
 )(ChatPanel);

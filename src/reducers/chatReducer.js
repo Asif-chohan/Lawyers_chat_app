@@ -3,7 +3,9 @@ import {
   REC_CALL,
   DECLINE_KNOW,
   OUTGOING_DECLINE,
-  ONLINE_USERS
+  ONLINE_USERS,
+  GET_CONVER_ERR,
+  GET_CONVER
 } from "../actions/chatAction";
 
 const INIT_STATE = {
@@ -27,7 +29,9 @@ export default (state = INIT_STATE, action) => {
         getTokanStatus: "done",
         loader: new Date(),
         callDeclinestatus: "not done",
-        outGoingDeclineStatus: "not done"
+        outGoingDeclineStatus: "not done",
+        getConversationStatus: "not done",
+        conversation: [],
       };
     case REC_CALL:
       return {
@@ -52,6 +56,19 @@ export default (state = INIT_STATE, action) => {
           action.payload === "declined" ? "done" : "not done",
         loader: new Date()
       };
+      case GET_CONVER:
+        return{
+          ...state,
+          getConversationStatus: "done",
+          conversation: action.payload,
+          loader: new Date()
+        }
+      case GET_CONVER_ERR:
+        return{
+          ...state,
+          getConversationStatus: "error",
+          loader: new Date()
+        }
    
 
     default:
